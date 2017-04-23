@@ -20,41 +20,15 @@
     <button @click="selected = []">Clear selection</button>
 </div>
 <script>
-    Vue.directive('selectable', {
-        twoWay: true,
-        params: ['selecting'],
-        bind: function () {
-            this.s = new selectable(
-                document.querySelector('.selection'),
-                this.el,
-                {
-                    renderSelected: false,
-                    renderSelecting: false,
-                    selectedSetter: (v) => this.vm.$set(this.expression, v),
-                    selectedGetter: () => this.vm.$get(this.expression),
-                    selectingSetter: (!!this.params && !!this.params.selecting) ?
-                        v => this.vm.$set(this.params.selecting, v) : null
-                }
-            );
-            this.s.setSelectables(Array.prototype.slice.call(this.el.querySelectorAll('.selectable')));
-        },
-
-        update: function (newValue, oldValue) {
-            // do something based on the updated value
-            // this will also be called for the initial value
-        },
-
-        unbind: function () {
-            this.s.detach();
-        }
-    });
-
     new Vue({
         el: '#app',
         data: {
             items: ['aaa', 'bbb', 'ccc', 'ddd', 'zzz', 'www', 'ggg'],
             selected: [],
             selecting: []
+        },
+        directives: {
+            selectable: vSelectable
         }
     });
 </script>

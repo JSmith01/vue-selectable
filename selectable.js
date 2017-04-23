@@ -1,9 +1,15 @@
 class selectable {
-    constructor(selectBox, boundingBox = null, options = {}) {
+    /**
+     *
+     * @param {HTMLElement} selectBox selection box element
+     * @param {HTMLElement} boundingBox element that limits where selection can be made
+     * @param {Object} options misc selection options
+     */
+    constructor(selectBox, boundingBox = document, options = {}) {
         Object.assign(this, {
             selectBox,
             rootElement: document,
-            boundingBox: selectable.absBox(boundingBox || document),
+            boundingBox: selectable.absBox(boundingBox),
             dragging: false,
             startX: null,
             startY: null,
@@ -36,6 +42,7 @@ class selectable {
      */
     detach() {
         Object.keys(this.handlers).forEach(event => this.rootElement.removeEventListener(event, this.handlers[event]));
+        this.selectables = [];
     }
 
     /**
@@ -218,3 +225,35 @@ class selectable {
         this.renderSelection();
     }
 }
+
+const vSelectable = {
+    twoWay: true,
+
+    params: ['selecting'],
+
+    bind() {
+        this.el.selectable = new selectable(
+            document.querySelector('.selection'),
+            this.el,
+            {
+                renderSelected: false,
+                renderSelecting: false,
+                selectedSetter: (v) => this.vm.$set(this.expression, v),
+                selectedGetter: () => this.vm.$get(this.expression),
+                selectingSetter: (!!this.params && !!this.params.selecting) ?
+                    v => this.vm.$set(this.params.selecting, v) : null
+            }
+        );
+        this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll('.selectable')));
+    },
+
+    update(newValue, oldValue) {
+        // do something based on the updated value
+        // this will also be called for the initial value
+    },
+
+    unbind() {
+        this.el.selectable.detach();
+        this.el.selectable = null;
+    }
+};
