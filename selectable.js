@@ -1,9 +1,9 @@
 class selectable {
-    constructor(selectBox, rootElement = null, boundingBox = null, options = {}) {
+    constructor(selectBox, boundingBox = null, options = {}) {
         Object.assign(this, {
             selectBox,
-            rootElement: rootElement || document,
-            boundingBox: this.absBox(boundingBox || rootElement || document),
+            rootElement: document,
+            boundingBox: selectable.absBox(boundingBox || document),
             dragging: false,
             startX: null,
             startY: null,
@@ -142,7 +142,7 @@ class selectable {
      * @param {Element} element
      * @return {{top: number, left: number, width: Number, height: Number}}
      */
-    absBox(element) {
+    static absBox(element) {
         let box = element.getBoundingClientRect();
 
         return { top: box.top + window.scrollY, left: box.left + window.scrollX, width: box.width, height: box.height };
@@ -154,7 +154,7 @@ class selectable {
     updateSelection() {
         let s = this.getSelectionBox();
         //this.selected = this.selectableBoxes.map(b =>
-        this.selecting = this.selectables.map(this.absBox).map(b =>
+        this.selecting = this.selectables.map(selectable.absBox).map(b =>
             (Math.abs((s.left - b.left) * 2 + s.width - b.width) < (s.width + b.width)) &&
             (Math.abs((s.top - b.top) * 2 + s.height - b.height) < (s.height + b.height))
         );
@@ -186,16 +186,16 @@ class selectable {
         this.selectables.forEach((e, i) => {
             if (this.renderSelecting) {
                 if (this.dragging && !!this.selecting[i]) {
-                    e.classList.add('selecting');
+                    e.classList.add(this.selectingClass);
                 } else {
-                    e.classList.remove('selecting');
+                    e.classList.remove(this.selectingClass);
                 }
             }
             if (this.renderSelected) {
                 if (!this.selected[i]) {
-                    e.classList.remove('selected');
+                    e.classList.remove(this.selectedClass);
                 } else {
-                    e.classList.add('selected');
+                    e.classList.add(this.selectedClass);
                 }
             }
         });
