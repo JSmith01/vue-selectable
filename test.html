@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test vue</title>
+    <script src="selectable.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="selectable.css">
+</head>
+<body>
+<div id="app">
+    <div v-selectable.root="selected" selecting="selecting" class="container">
+        <div class="selection"></div>
+        <div v-for="i in items" class="selectable" :style="{ top: $index * 100 + 'px' }"
+        :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }">
+            <span> ... </span>
+            <span>{{ i }}</span>
+        </div>
+    </div>
+    <button @click="selected = []">Clear selection</button>
+</div>
+<script>
+    Vue.directive('selectable', {
+        twoWay: true,
+        params: ['selecting'],
+        bind: function () {
+            this.s = new selectable(
+                document.querySelector('.selection'),
+                !!this.modifiers.root ? document : this.el,
+                this.el,
+                {
+                    renderSelected: false,
+                    renderSelecting: false,
+                    selectedSetter: (v) => this.vm.$set(this.expression, v),
+                    selectedGetter: () => this.vm.$get(this.expression),
+                    selectingSetter: (!!this.params && !!this.params.selecting) ?
+                        v => this.vm.$set(this.params.selecting, v) : null
+                }
+            );
+            this.s.setSelectables(Array.prototype.slice.call(this.el.querySelectorAll('.selectable')));
+        },
+
+        update: function (newValue, oldValue) {
+            // do something based on the updated value
+            // this will also be called for the initial value
+        },
+
+        unbind: function () {
+            this.s.detach();
+        }
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            items: ['aaa', 'bbb', 'ccc', 'ddd', 'zzz', 'www', 'ggg'],
+            selected: [],
+            selecting: []
+        }
+    });
+</script>
+</body>
+</html>

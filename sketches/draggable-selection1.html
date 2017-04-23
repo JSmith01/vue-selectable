@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Draggable</title>
+  <style>
+    .selection {
+      position: absolute;
+      border: 1px dotted #000;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      cursor: default;
+    }
+    .container {
+      position: relative;
+      width: 500px;
+      height: 1500px;
+      background: #f0f0f0;
+    }
+    .selectable {
+      position: absolute;
+      width: 200px;
+      height: 50px;
+      background-color: purple;
+    }
+    .selectable.selecting {
+      background-color: yellow;
+    }
+    .selectable.selected {
+      background-color: orange;
+    }
+  </style>
+</head>
+<body>
+<div style="position: absolute; left: 50px; top: 70px;">
+  <div class="container">
+    <div class="selection"></div>
+    <div class="selectable" style="top: 20px; left: 40px;"></div>
+    <div class="selectable" style="top: 120px; left: 40px;"></div>
+    <div class="selectable" style="top: 220px; left: 40px;"></div>
+  </div>
+</div>
+  <script>
+    const selectable = {
+      rootElement: null,
+      boundingBox: null,
+      selectBox: null,
+      dragging: false,
+      startX: null,
+      startY: null,
+      endX: null,
+      endY: null,
+      selectables: [],
+
+      init(rootElement, selectBox, boundingBox) {
+        this.selectBox = selectBox;
+        this.rootElement = rootElement;
+        this.boundingBox = boundingBox || rootElement;
+        rootElement.addEventListener('mousedown', this.mouseDown.bind(this));
+        rootElement.addEventListener('mouseup', this.mouseUp.bind(this));
+        rootElement.addEventListener('mousemove', this.mouseMove.bind(this));
+      },
+
+      mouseDown(e) {
+      	let [x, y] = this.bound(e.clientX, e.clientY);
+        this.startX = x;
+        this.startY = y;
+        this.endX = x;
+        this.endY = y;
+        this.dragging = true;
+        this.render();
+      },
+
+      mouseUp(e) {
+      	let [x, y] = this.bound(e.clientX, e.clientY);
+        this.endX = x;
+        this.endY = y;
+        this.dragging = false;
+        this.render();
+      },
+
+      mouseMove(e) {
+        if (this.dragging) {
+       	  let [x, y] = this.bound(e.clientX, e.clientY);
+          this.endX = x;
+          this.endY = y;
+          this.render();
+        }
+      },
+
+      bound(x, y) {
+      	let box = this.boundingBox.getBoundingClientRect();
+        return [
+          Math.min(Math.max(0, x - box.left), box.width - 1),
+          Math.min(Math.max(0, y - box.top), box.height - 1)
+        ];
+      },
+
+      absBox(element) {
+      	let box = element.getBoundingClientRect();
+
+      	return { top: box.top + window.scrollY, left: box.left + window.scrollX, width: box.width, height: box.height };
+      },
+
+      render() {
+        this.selectBox.style.left = Math.min(this.startX, this.endX) + 'px';
+        this.selectBox.style.top = Math.min(this.startY, this.endY) + 'px';
+        this.selectBox.style.width = Math.abs(this.startX - this.endX) + 'px';
+        this.selectBox.style.height = Math.abs(this.startY - this.endY) + 'px';
+      }
+    };
+
+    selectable.init(document, document.querySelector('.selection'), document.querySelector('.container'));
+    selectable.selectables = Array.prototype.slice.call(document.querySelectorAll('.selectable'));
+  </script>
+</body>
+</html>

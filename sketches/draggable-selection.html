@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draggable</title>
+    <link rel="stylesheet" href="selectable.css">
+    <script src="selectable.js"></script>
+</head>
+<body>
+<div style="position: absolute; left: 50px; top: 70px;">
+    <div class="container">
+        <div class="selection"></div>
+        <div class="selectable" style="top: 20px; left: 40px;" id="a"></div>
+        <div class="selectable" style="top: 120px; left: 40px;" id="b"></div>
+        <div class="selectable" style="top: 220px; left: 40px;" id="c"></div>
+        <div class="selectable" style="top: 320px; left: 40px;" id="c"></div>
+        <div class="selectable" style="top: 420px; left: 40px;" id="c"></div>
+    </div>
+</div>
+<script>
+    selectable.init(document, document.querySelector('.selection'), document.querySelector('.container'));
+    selectable.setSelectables(Array.prototype.slice.call(document.querySelectorAll('.selectable')));
+</script>
+</body>
+</html>
