@@ -25,7 +25,7 @@
         }
 
         /* Styles for v-selectable display */
-        .selection {
+        #selectbox {
             position: absolute;
             border: 1px dotted #000;
             z-index: 9999;
@@ -44,7 +44,7 @@
 </head>
 <body>
 <div id="app">
-    <div class="selection"></div>
+    <div id="selectbox"></div>
     <table>
         <thead>
         <tr>
@@ -53,9 +53,11 @@
             <th>Age</th>
         </tr>
         </thead>
-        <tbody v-selectable="selected" selecting="selecting">
-        <tr v-for="person in persons" track-by="id" class="selectable">
-            <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }">{{ person.name }}</td>
+        <tbody v-selectable="selected" selecting="selecting" items=".item" box="#selectbox">
+        <tr v-for="person in persons" track-by="id">
+            <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }" class="item">
+                {{ person.name }}
+            </td>
             <td>{{ person.surname }}</td>
             <td>{{ person.age }}</td>
         </tr>

@@ -235,10 +235,10 @@ class selectable {
 const vSelectable = {
     twoWay: true,
 
-    params: ['selecting'],
+    params: ['selecting', 'items', 'box'],
 
     bind() {
-        let selectionBox = document.querySelector('.selection');
+        let selectionBox = document.querySelector(this.params.box || '.selection');
         selectionBox.style.display = 'block';
         this.el.selectable = new selectable(
             selectionBox,
@@ -252,7 +252,7 @@ const vSelectable = {
                     v => this.vm.$set(this.params.selecting, v) : null
             }
         );
-        this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll('.selectable')));
+        this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(this.params.items || '.selectable')));
         selectionBox.style.display = 'none';
     },
 
