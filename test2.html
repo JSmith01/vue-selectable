@@ -63,10 +63,16 @@
         </tr>
         </tbody>
     </table>
+    <div>
+        <button @click="clearSelection">Clear selection</button>
+        <button @click="selectAll">Select all</button>
+        <button @click="invertSelection">Invert selection</button>
+    </div>
 </div>
 <script>
     new Vue({
         el: '#app',
+
         data: {
             persons: [
                 { id: 1, name: 'Ronald', surname: 'Reugan', age: 85 },
@@ -78,6 +84,23 @@
             selected: [],
             selecting: []
         },
+
+        methods: {
+            clearSelection() {
+                this.selected = [];
+            },
+
+            selectAll() {
+                this.selected = new Array(this.persons.length).fill(true);
+            },
+
+            invertSelection() {
+                this.selected = (this.selected.length > 0) ?
+                    this.selected.map(i => !i) :
+                    new Array(this.persons.length).fill(true);
+            }
+        },
+
         directives: {
             selectable: vSelectable
         }
