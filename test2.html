@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test vue (closer to real use)</title>
+    <script src="selectable.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
+    <style>
+        #app > table {
+            font-size: 16px;
+            width: 500px;
+        }
+        #app > table th,
+        #app > table td {
+            padding: 5px;
+            margin: 1px;
+            background-color: #f0f0f0;
+        }
+        #app > table > thead > tr > th {
+            background-color: #ccc;
+        }
+        #app > table > thead > tr > th:first-child,
+        #app > table > tbody > tr > td:first-child {
+            width: 300px;
+        }
+
+        /* Styles for v-selectable display */
+        .selection {
+            position: absolute;
+            border: 1px dotted #000;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            cursor: default;
+            display: none;
+        }
+        #app > table > tbody > tr > td.selecting:first-child {
+            background-color: yellow;
+        }
+        #app > table > tbody > tr > td.selected:first-child {
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="selection"></div>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Age</th>
+        </tr>
+        </thead>
+        <tbody v-selectable="selected" selecting="selecting">
+        <tr v-for="person in persons" track-by="id" class="selectable">
+            <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }">{{ person.name }}</td>
+            <td>{{ person.surname }}</td>
+            <td>{{ person.age }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            persons: [
+                { id: 1, name: 'Ronald', surname: 'Reugan', age: 85 },
+                { id: 2, name: 'Bill', surname: 'Clinton', age: 50 },
+                { id: 3, name: 'George', surname: 'Bush', age: 49},
+                { id: 4, name: 'Barack', surname: 'Obama', age: 25 },
+                { id: 5, name: 'Donald', surname: 'Trump', age: 70 },
+            ],
+            selected: [],
+            selecting: []
+        },
+        directives: {
+            selectable: vSelectable
+        }
+    });
+</script>
+</body>
+</html>

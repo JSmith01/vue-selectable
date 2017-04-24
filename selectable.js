@@ -35,6 +35,10 @@ class selectable {
         }, options);
 
         Object.keys(this.handlers).forEach(event => this.rootElement.addEventListener(event, this.handlers[event]));
+
+        let selectBoxStart = selectable.absBox(selectBox);
+        this.selectBoxStartX = this.boundingBox.left - selectBoxStart.left;
+        this.selectBoxStartY = this.boundingBox.top - selectBoxStart.top;
     }
 
     /**
@@ -67,6 +71,7 @@ class selectable {
             e.pageY < this.boundingBox.top || e.pageY > this.boundingBox.height + this.boundingBox.top) {
             return;
         }
+        e.preventDefault();
         let [x, y] = this.bound(e);
         this.startX = x;
         this.startY = y;
@@ -97,6 +102,7 @@ class selectable {
      */
     mouseUp(e) {
         if (this.dragging) {
+            e.preventDefault();
             let [x, y] = this.bound(e);
             this.endX = x;
             this.endY = y;
@@ -215,8 +221,8 @@ class selectable {
         if (this.dragging) {
             let box = this.getSelectionBox();
             this.selectBox.style.display = 'block';
-            this.selectBox.style.left = (box.left - this.boundingBox.left) + 'px';
-            this.selectBox.style.top = (box.top - this.boundingBox.top) + 'px';
+            this.selectBox.style.left = (box.left - this.boundingBox.left + this.selectBoxStartX) + 'px';
+            this.selectBox.style.top = (box.top - this.boundingBox.top + this.selectBoxStartY) + 'px';
             this.selectBox.style.width = box.width + 'px';
             this.selectBox.style.height = box.height + 'px';
         } else {
@@ -232,8 +238,10 @@ const vSelectable = {
     params: ['selecting'],
 
     bind() {
+        let selectionBox = document.querySelector('.selection');
+        selectionBox.style.display = 'block';
         this.el.selectable = new selectable(
-            document.querySelector('.selection'),
+            selectionBox,
             this.el,
             {
                 renderSelected: false,
@@ -245,6 +253,7 @@ const vSelectable = {
             }
         );
         this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll('.selectable')));
+        selectionBox.style.display = 'none';
     },
 
     update(newValue, oldValue) {
