@@ -40,10 +40,16 @@
         #app > table > tbody > tr > td.selected:first-child {
             background-color: orange;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div id="app">
+    <div>
+        <button @click="showHidden = !showHidden">Toggle hidden</button>
+    </div>
     <div id="selectbox"></div>
     <table>
         <thead>
@@ -54,7 +60,7 @@
         </tr>
         </thead>
         <tbody v-selectable="selected" selecting="selecting" items=".item" box="#selectbox">
-        <tr v-for="person in persons" track-by="id">
+        <tr v-for="person in persons" track-by="id" :class="{ hidden: showHidden && person.hidden }">
             <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }" class="item">
                 {{ person.name }}
             </td>
@@ -75,14 +81,15 @@
 
         data: {
             persons: [
-                { id: 1, name: 'Ronald', surname: 'Reugan', age: 85 },
-                { id: 2, name: 'Bill', surname: 'Clinton', age: 50 },
-                { id: 3, name: 'George', surname: 'Bush', age: 49},
-                { id: 4, name: 'Barack', surname: 'Obama', age: 25 },
-                { id: 5, name: 'Donald', surname: 'Trump', age: 70 },
+                { id: 1, name: 'Ronald', surname: 'Reugan', age: 85, hidden: false },
+                { id: 2, name: 'Bill', surname: 'Clinton', age: 50, hidden: true },
+                { id: 3, name: 'George', surname: 'Bush', age: 49, hidden: false },
+                { id: 4, name: 'Barack', surname: 'Obama', age: 25, hidden: true },
+                { id: 5, name: 'Donald', surname: 'Trump', age: 70, hidden: false },
             ],
             selected: [],
-            selecting: []
+            selecting: [],
+            showHidden: false
         },
 
         methods: {

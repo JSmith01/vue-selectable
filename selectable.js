@@ -9,14 +9,13 @@ class selectable {
         Object.assign(this, {
             selectBox,
             rootElement: document,
-            boundingBox: selectable.absBox(boundingBox),
+            boundingBox,
             dragging: false,
             startX: null,
             startY: null,
             endX: null,
             endY: null,
             selectables: [],
-            //selectableBoxes: [], - turned off due to possibility of DOM to change (when in Vue.js framework)
             selected: [],
             selectedSetter: null,
             selectedGetter: null,
@@ -37,16 +36,20 @@ class selectable {
         Object.keys(this.handlers).forEach(event => this.rootElement.addEventListener(event, this.handlers[event]));
 
         let selectBoxStart = selectable.absBox(selectBox);
-        this.selectBoxStartX = this.boundingBox.left - selectBoxStart.left;
-        this.selectBoxStartY = this.boundingBox.top - selectBoxStart.top;
+        let bb = selectable.absBox(boundingBox);
+        this.selectBoxStartX = bb.left - selectBoxStart.left;
+        this.selectBoxStartY = bb.top - selectBoxStart.top;
     }
 
     /**
-     * Removes all registered event handlers
+     * Removes all registered event handlers and clears references to DOM nodes
      */
     detach() {
         Object.keys(this.handlers).forEach(event => this.rootElement.removeEventListener(event, this.handlers[event]));
         this.selectables = [];
+        this.selectBox = null;
+        this.boundingBox = null;
+        this.rootElement = null;
     }
 
     /**
@@ -55,7 +58,6 @@ class selectable {
      */
     setSelectables(elements) {
         this.selectables = elements;
-        //this.selectableBoxes = elements.map(this.absBox);
         this.selected = elements.map(i => false);
         if (typeof this.selectedSetter === 'function') {
             this.selectedSetter(this.selected);
@@ -70,8 +72,9 @@ class selectable {
         if (e.button !== 0) {
             return;
         }
-        if (e.pageX < this.boundingBox.left || e.pageX > this.boundingBox.width + this.boundingBox.left ||
-            e.pageY < this.boundingBox.top || e.pageY > this.boundingBox.height + this.boundingBox.top) {
+        let bb = selectable.absBox(this.boundingBox);
+        if (e.pageX < bb.left || e.pageX > bb.width + bb.left ||
+            e.pageY < bb.top || e.pageY > bb.height + bb.top) {
             return;
         }
         e.preventDefault();
@@ -150,9 +153,10 @@ class selectable {
      * @return {[int, int]}
      */
     bound(e) {
+        let bb = selectable.absBox(this.boundingBox);
         return [
-            Math.min(Math.max(this.boundingBox.left, e.pageX), this.boundingBox.width + this.boundingBox.left),
-            Math.min(Math.max(this.boundingBox.top, e.pageY), this.boundingBox.height + this.boundingBox.top)
+            Math.min(Math.max(bb.left, e.pageX), bb.width + bb.left),
+            Math.min(Math.max(bb.top, e.pageY), bb.height + bb.top)
         ];
     }
 
@@ -172,7 +176,6 @@ class selectable {
      */
     updateSelection() {
         let s = this.getSelectionBox();
-        //this.selected = this.selectableBoxes.map(b =>
         this.selecting = this.selectables.map(selectable.absBox).map(b =>
             (Math.abs((s.left - b.left) * 2 + s.width - b.width) < (s.width + b.width)) &&
             (Math.abs((s.top - b.top) * 2 + s.height - b.height) < (s.height + b.height))
@@ -226,9 +229,10 @@ class selectable {
     render() {
         if (this.dragging) {
             let box = this.getSelectionBox();
+            let bb = selectable.absBox(this.boundingBox);
             this.selectBox.style.display = 'block';
-            this.selectBox.style.left = (box.left - this.boundingBox.left + this.selectBoxStartX) + 'px';
-            this.selectBox.style.top = (box.top - this.boundingBox.top + this.selectBoxStartY) + 'px';
+            this.selectBox.style.left = (box.left - bb.left + this.selectBoxStartX) + 'px';
+            this.selectBox.style.top = (box.top - bb.top + this.selectBoxStartY) + 'px';
             this.selectBox.style.width = box.width + 'px';
             this.selectBox.style.height = box.height + 'px';
         } else {
@@ -252,7 +256,7 @@ const vSelectable = {
             {
                 renderSelected: false,
                 renderSelecting: false,
-                selectedSetter: (v) => this.vm.$set(this.expression, v),
+                selectedSetter: v => this.vm.$set(this.expression, v),
                 selectedGetter: () => this.vm.$get(this.expression),
                 selectingSetter: (!!this.params && !!this.params.selecting) ?
                     v => this.vm.$set(this.params.selecting, v) : null
