@@ -67,6 +67,9 @@ class selectable {
      * @param {MouseEvent} e
      */
     mouseDown(e) {
+        if (e.button !== 0) {
+            return;
+        }
         if (e.pageX < this.boundingBox.left || e.pageX > this.boundingBox.width + this.boundingBox.left ||
             e.pageY < this.boundingBox.top || e.pageY > this.boundingBox.height + this.boundingBox.top) {
             return;
@@ -102,6 +105,9 @@ class selectable {
      */
     mouseUp(e) {
         if (this.dragging) {
+            if (e.button !== 0) {
+                return;
+            }
             e.preventDefault();
             let [x, y] = this.bound(e);
             this.endX = x;
