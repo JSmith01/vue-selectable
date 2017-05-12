@@ -1,0 +1,32 @@
+{
+  "name": "vue-selectable",
+  "version": "0.0.1",
+  "description": "Directive to make objects selectable in vue.js application",
+  "main": "dist/selectable.js",
+  "module": "selectable.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JSmith01/vue-selectable"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "vue": "^1.0.28"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.4.0",
+    "webpack": "^2.5.1"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [
+    "vue",
+    "selectable"
+  ],
+  "author": "Dmitry Zlygin <dzlygin@gmail.com>",
+  "license": "MIT"
+}

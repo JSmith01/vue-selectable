@@ -5,11 +5,12 @@
 It's common task to make mouse selection of some objects on the page. This directive makes this task
 extremely easy, all you need to implement object selection is two lines of code.
 It was designed after jQuery Selectable interaction, with some details borrowed from `angular-multiple-selection`.
+Now it supports plain mouse selection and adding to previously selected values with
+`Ctrl` key pressed during selection.
 
 ## Requirements
 
-* vue: 1.0
-* ES6 in browser / Babel
+* vue: ^1.0
 
 Vue.js 2.x version is still WIP
 
@@ -39,7 +40,7 @@ visibility by changing `display` attribute from `block` to `none` and vise versa
 ```
 
 ```js
-import selectable from 'selectable';
+import selectable from 'vue-selectable';
 
 new Vue({
 	el: '#app',
@@ -56,10 +57,11 @@ new Vue({
 
 ## Options
 
-v-selectable requires one mandatory parameter - directive parameter - array of items selection 
-status (array of boolean)
+`v-selectable` requires one mandatory parameter - directive parameter - array of items selection 
+status (array of boolean). If you have 5 selectable items, this array will have 5 elements initially
+set to `false`. When user selects some item(s), values change to `true` accordingly.
 
-Other parameters available
+Other parameters available:
 * `selecting` - array of items selection status during selection drag (array of boolean). Must
   be used to display realtime selection visual feedback.
 * `items` - CSS selector to identify selectable items, by default it is set to `.selectable`

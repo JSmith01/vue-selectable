@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Test vue</title>
-    <script src="../selectable.js"></script>
+    <script src="../dist/selectable.js"></script>
     <script src="../node_modules/vue/dist/vue.js"></script>
     <style>
         .selection {
@@ -56,7 +56,7 @@
             selecting: []
         },
         directives: {
-            selectable: vSelectable
+            selectable: vueSelectable.default
         }
     });
 </script>

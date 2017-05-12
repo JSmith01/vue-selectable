@@ -242,7 +242,7 @@ class selectable {
     }
 }
 
-const vSelectable = {
+const vueSelectable = {
     twoWay: true,
 
     params: ['selecting', 'items', 'box', 'constraint'],
@@ -276,3 +276,5 @@ const vSelectable = {
         this.el.selectable = null;
     }
 };
+
+export default vueSelectable;
