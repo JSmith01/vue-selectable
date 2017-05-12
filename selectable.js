@@ -245,14 +245,14 @@ class selectable {
 const vSelectable = {
     twoWay: true,
 
-    params: ['selecting', 'items', 'box'],
+    params: ['selecting', 'items', 'box', 'constraint'],
 
     bind() {
         let selectionBox = document.querySelector(this.params.box || '.selection');
         selectionBox.style.display = 'block';
         this.el.selectable = new selectable(
             selectionBox,
-            this.el,
+            !!this.params.constraint ? document.querySelector(this.params.constraint) : this.el,
             {
                 renderSelected: false,
                 renderSelecting: false,

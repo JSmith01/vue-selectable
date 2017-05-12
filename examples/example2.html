@@ -6,21 +6,21 @@
     <script src="../selectable.js"></script>
     <script src="../node_modules/vue/dist/vue.js"></script>
     <style>
-        #app > table {
+        #app table {
             font-size: 16px;
             width: 500px;
         }
-        #app > table th,
-        #app > table td {
+        #app table th,
+        #app table td {
             padding: 5px;
             margin: 1px;
             background-color: #f0f0f0;
         }
-        #app > table > thead > tr > th {
+        #app table > thead > tr > th {
             background-color: #ccc;
         }
-        #app > table > thead > tr > th:first-child,
-        #app > table > tbody > tr > td:first-child {
+        #app table > thead > tr > th:first-child,
+        #app table > tbody > tr > td:first-child {
             width: 300px;
         }
 
@@ -34,14 +34,25 @@
             cursor: default;
             display: none;
         }
-        #app > table > tbody > tr > td.selecting:first-child {
+        #app table > tbody > tr > td.selecting:first-child {
             background-color: yellow;
         }
-        #app > table > tbody > tr > td.selected:first-child {
+        #app table > tbody > tr > td.selected:first-child {
             background-color: orange;
         }
         .hidden {
             display: none;
+        }
+        .wrapper {
+            position: relative;
+        }
+        #selection-area {
+            position: absolute;
+            z-index: -500;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 314px;
         }
     </style>
 </head>
@@ -50,25 +61,30 @@
     <div>
         <button @click="showHidden = !showHidden">Toggle hidden</button>
     </div>
+
     <div id="selectbox"></div>
-    <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Age</th>
-        </tr>
-        </thead>
-        <tbody v-selectable="selected" selecting="selecting" items=".item" box="#selectbox">
-        <tr v-for="person in persons" track-by="id" :class="{ hidden: showHidden && person.hidden }">
-            <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }" class="item">
-                {{ person.name }}
-            </td>
-            <td>{{ person.surname }}</td>
-            <td>{{ person.age }}</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="wrapper">
+        <div id="selection-area"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Age</th>
+            </tr>
+            </thead>
+            <tbody v-selectable="selected" selecting="selecting" items=".item" box="#selectbox" constraint="#selection-area">
+            <tr v-for="person in persons" track-by="id" :class="{ hidden: showHidden && person.hidden }">
+                <td :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }" class="item">
+                    {{ person.name }}
+                </td>
+                <td>{{ person.surname }}</td>
+                <td>{{ person.age }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div>
         <button @click="clearSelection">Clear selection</button>
         <button @click="selectAll">Select all</button>

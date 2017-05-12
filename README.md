@@ -65,6 +65,8 @@ Other parameters available
 * `items` - CSS selector to identify selectable items, by default it is set to `.selectable`
   (elements with CSS class "selectable")
 * `box` - selection box element. By default it tries to use element with `selection` CSS class
+* `constraint` - box that constrains selection area (selection box can be only inside area
+  limited to this element), by default selection area limited to element with directive
 
 ## Examples
 
