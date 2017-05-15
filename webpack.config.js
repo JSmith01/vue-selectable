@@ -1,10 +1,13 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
-    entry: './selectable.js',
+    entry: {
+        selectable: './v-selectable.js',
+        selectable2: './v-selectable2.js'
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'selectable.js',
+        filename: '[name].js',
         library: 'vueSelectable',
         libraryTarget: 'umd',
         umdNamedDefine: true

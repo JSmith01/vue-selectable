@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Test vue</title>
-    <script src="../dist/selectable.js"></script>
-    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../dist/selectable2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.js"></script>
     <style>
         .selection {
             position: absolute;
@@ -37,12 +37,13 @@
 </head>
 <body>
 <div id="app">
-    <div v-selectable="selected" data-selecting="selecting" class="container">
+    <div v-selectable="{ selectedGetter: selectedGetter, selectedSetter: selectedSetter, selectingSetter: selectingSetter}"
+         class="container">
         <div class="selection"></div>
-        <div v-for="i in items" class="selectable" :style="{ top: $index * 100 + 'px' }"
-        :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }">
+        <div v-for="(n, i) in items" class="selectable" :style="{ top: i * 100 + 'px' }"
+        :class="{ selected: !!selected[i], selecting: !!selecting[i] }">
             <span> ... </span>
-            <span>{{ i }}</span>
+            <span>{{ n }}</span>
         </div>
     </div>
     <button @click="selected = []">Clear selection</button>
@@ -57,6 +58,13 @@
         },
         directives: {
             selectable: vueSelectable.default
+        },
+        methods: {
+            selectedGetter() { return this.selected; },
+
+            selectedSetter(v) { this.selected = v; },
+
+            selectingSetter(v) { this.selecting = v; }
         }
     });
 </script>

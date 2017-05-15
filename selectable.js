@@ -1,15 +1,16 @@
 class selectable {
     /**
      *
-     * @param {HTMLElement} selectBox selection box element
      * @param {HTMLElement} boundingBox element that limits where selection can be made
      * @param {Object} options misc selection options
      */
-    constructor(selectBox, boundingBox = document, options = {}) {
+    constructor(boundingBox = document, options = {}) {
         Object.assign(this, {
-            selectBox,
+            selectBox: null,
+            selectBoxSelector: '.selection',
             rootElement: document,
             boundingBox,
+            boundingBoxSelector: null,
             dragging: false,
             startX: null,
             startY: null,
@@ -27,18 +28,14 @@ class selectable {
                 mouseup: this.mouseUp.bind(this),
                 mousemove: this.mouseMove.bind(this),
             },
-            renderSelected: true,
-            renderSelecting: true,
+            renderSelected: false,
+            renderSelecting: false,
             selectingClass: 'selecting',
-            selectedClass: 'selected'
+            selectedClass: 'selected',
+            firstRun: true
         }, options);
 
         Object.keys(this.handlers).forEach(event => this.rootElement.addEventListener(event, this.handlers[event]));
-
-        let selectBoxStart = selectable.absBox(selectBox);
-        let bb = selectable.absBox(boundingBox);
-        this.selectBoxStartX = bb.left - selectBoxStart.left;
-        this.selectBoxStartY = bb.top - selectBoxStart.top;
     }
 
     /**
@@ -72,6 +69,9 @@ class selectable {
         if (e.button !== 0) {
             return;
         }
+        if (!!this.boundingBoxSelector) {
+            this.boundingBox = document.querySelector(this.boundingBoxSelector);
+        }
         let bb = selectable.absBox(this.boundingBox);
         if (e.pageX < bb.left || e.pageX > bb.width + bb.left ||
             e.pageY < bb.top || e.pageY > bb.height + bb.top) {
@@ -79,6 +79,7 @@ class selectable {
         }
         e.preventDefault();
         let [x, y] = this.bound(e);
+        this.selectBox = document.querySelector(this.selectBoxSelector);
         this.startX = x;
         this.startY = y;
         this.endX = x;
@@ -227,54 +228,26 @@ class selectable {
      * Renders current selection state
      */
     render() {
+        let elStyle = this.selectBox.style;
         if (this.dragging) {
             let box = this.getSelectionBox();
             let bb = selectable.absBox(this.boundingBox);
-            this.selectBox.style.display = 'block';
-            this.selectBox.style.left = (box.left - bb.left + this.selectBoxStartX) + 'px';
-            this.selectBox.style.top = (box.top - bb.top + this.selectBoxStartY) + 'px';
-            this.selectBox.style.width = box.width + 'px';
-            this.selectBox.style.height = box.height + 'px';
+            elStyle.display = 'block';
+            if (this.firstRun) {
+                let selectBoxStart = selectable.absBox(this.selectBox);
+                this.selectBoxStartX = bb.left - selectBoxStart.left;
+                this.selectBoxStartY = bb.top - selectBoxStart.top;
+                this.firstRun = false;
+            }
+            elStyle.left = (box.left - bb.left + this.selectBoxStartX) + 'px';
+            elStyle.top = (box.top - bb.top + this.selectBoxStartY) + 'px';
+            elStyle.width = box.width + 'px';
+            elStyle.height = box.height + 'px';
         } else {
-            this.selectBox.style.display = 'none';
+            elStyle.display = 'none';
         }
         this.renderSelection();
     }
 }
 
-const vueSelectable = {
-    twoWay: true,
-
-    params: ['selecting', 'items', 'box', 'constraint'],
-
-    bind() {
-        let selectionBox = document.querySelector(this.params.box || '.selection');
-        selectionBox.style.display = 'block';
-        this.el.selectable = new selectable(
-            selectionBox,
-            !!this.params.constraint ? document.querySelector(this.params.constraint) : this.el,
-            {
-                renderSelected: false,
-                renderSelecting: false,
-                selectedSetter: v => this.vm.$set(this.expression, v),
-                selectedGetter: () => this.vm.$get(this.expression),
-                selectingSetter: (!!this.params && !!this.params.selecting) ?
-                    v => this.vm.$set(this.params.selecting, v) : null
-            }
-        );
-        this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(this.params.items || '.selectable')));
-        selectionBox.style.display = 'none';
-    },
-
-    update(newValue, oldValue) {
-        // do something based on the updated value
-        // this will also be called for the initial value
-    },
-
-    unbind() {
-        this.el.selectable.detach();
-        this.el.selectable = null;
-    }
-};
-
-export default vueSelectable;
+export default selectable;

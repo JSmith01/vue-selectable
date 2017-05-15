@@ -11,8 +11,7 @@ Now it supports plain mouse selection and adding to previously selected values w
 ## Requirements
 
 * vue: ^1.0
-
-Vue.js 2.x version is still WIP
+* vue2: ^2.0
 
 ## Install
 
@@ -30,8 +29,10 @@ Another thing that you'll definitely need is a element that will be selection bo
 will change `height`, `width`, `top`, and `left` attributes of this element, and toggle its
 visibility by changing `display` attribute from `block` to `none` and vise versa.
 
+### Vue 1.x
+
 ```html
-<div v-selectable="selected" selecting="selecting" id="app">
+<div v-selectable="selected" data-selecting="selecting" id="app">
         <div class="selection"></div>
         <div v-for="item in items"
              :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }"
@@ -55,24 +56,34 @@ new Vue({
 });
 ```
 
-## Options
+## Options / Vue.js v1
 
 `v-selectable` requires one mandatory parameter - directive parameter - array of items selection 
 status (array of boolean). If you have 5 selectable items, this array will have 5 elements initially
 set to `false`. When user selects some item(s), values change to `true` accordingly.
 
 Other parameters available:
-* `selecting` - array of items selection status during selection drag (array of boolean). Must
+* `data-selecting` - array of items selection status during selection drag (array of boolean). Must
   be used to display realtime selection visual feedback.
-* `items` - CSS selector to identify selectable items, by default it is set to `.selectable`
+* `data-items` - CSS selector to identify selectable items, by default it is set to `.selectable`
   (elements with CSS class "selectable")
-* `box` - selection box element. By default it tries to use element with `selection` CSS class
-* `constraint` - box that constrains selection area (selection box can be only inside area
+* `data-box` - selection box element. By default it tries to use element with `selection` CSS class
+* `data-constraint` - box that constrains selection area (selection box can be only inside area
   limited to this element), by default selection area limited to element with directive
+
+## Options / Vue.js v2
+
+`v-selectable` requires one mandatory parameter - directive parameter - object with 3 functions,
+`selectedGetter`, `selectedSetter`, and `selectingSetter`, to get/set arrays 'selected' (selection 
+status - array of boolean), 'selecting' (array of items selection status during selection drag, 
+array of boolean; must be used to display realtime selection visual feedback).
+
+Other parameters are the same as for Vue.js v1, except missing `data-selecting`.
 
 ## Examples
 
-Example usages can be found in `examples` directory.
+Example usages can be found in `examples` directory for Vue.js v1 and `examples2` for Vue.js v2.
+Examples for v2 were tested against version 2.3.3.
 
 ## License
 

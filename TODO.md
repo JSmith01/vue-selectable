@@ -1,6 +1,5 @@
 # List of known issues and planned features
 
-* Port to Vue.js 2.x
 * Every mouse click is hijacked, thus preventing from making usual links/buttons.
   Needs to prevent only selection?
 * Make absBox() results on `selectables[]` and `boundingBox` cacheable (ala autoRefresh: off in

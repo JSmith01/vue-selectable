@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Directive to make objects selectable in vue.js application",
   "main": "dist/selectable.js",
-  "module": "selectable.js",
+  "module": "v-selectable.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/JSmith01/vue-selectable"
