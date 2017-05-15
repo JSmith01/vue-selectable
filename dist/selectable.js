@@ -442,32 +442,49 @@ var vueSelectable = {
 
     params: ['selecting', 'items', 'box', 'constraint'],
 
-    bind: function bind() {
+    bind: function bind(el, binding) {
         var _this = this;
 
-        var params = this.el.dataset;
-        this.el.selectable = new _selectable2.default(!!this.params.constraint ? document.querySelector(params.constraint) : this.el, {
-            boundingBoxSelector: params.constraint,
-            selectBoxSelector: params.box || '.selection',
-            selectedSetter: function selectedSetter(v) {
-                return _this.vm.$set(_this.expression, v);
-            },
-            selectedGetter: function selectedGetter() {
-                return _this.vm.$get(_this.expression);
-            },
-            selectingSetter: !!params && !!params.selecting ? function (v) {
-                return _this.vm.$set(params.selecting, v);
-            } : null
-        });
-        this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+        // Vue.js v2
+        if (!!el && !!binding) {
+            var arg = binding.value;
+            el.selectable = new _selectable2.default(!!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el, {
+                selectBoxSelector: el.dataset.box || '.selection',
+                boundingBoxSelector: el.dataset.constraint,
+                selectedSetter: arg.selectedSetter,
+                selectedGetter: arg.selectedGetter,
+                selectingSetter: arg.selectingSetter
+            });
+            el.selectable.setSelectables(Array.from(el.querySelectorAll(el.dataset.items || '.selectable')));
+        } else {
+            // Vue.js v1
+            var params = this.el.dataset;
+            this.el.selectable = new _selectable2.default(!!this.params.constraint ? document.querySelector(params.constraint) : this.el, {
+                boundingBoxSelector: params.constraint,
+                selectBoxSelector: params.box || '.selection',
+                selectedSetter: function selectedSetter(v) {
+                    return _this.vm.$set(_this.expression, v);
+                },
+                selectedGetter: function selectedGetter() {
+                    return _this.vm.$get(_this.expression);
+                },
+                selectingSetter: !!params && !!params.selecting ? function (v) {
+                    return _this.vm.$set(params.selecting, v);
+                } : null
+            });
+            this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+        }
     },
-    update: function update(newValue, oldValue) {
-        // do something based on the updated value
-        // this will also be called for the initial value
-    },
-    unbind: function unbind() {
-        this.el.selectable.detach();
-        this.el.selectable = null;
+    unbind: function unbind(el) {
+        if (el) {
+            // Vue.js v2
+            el.selectable.detach();
+            el.selectable = null;
+        } else {
+            // Vue.js v1
+            this.el.selectable.detach();
+            this.el.selectable = null;
+        }
     }
 };
 
