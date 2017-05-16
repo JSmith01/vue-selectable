@@ -34,7 +34,11 @@ visibility by changing `display` attribute from `block` to `none` and vise versa
 NB: for Vue 2.x all you need is to write `v-for` as `v-for="(item, i) in items"`
 
 ```html
-<div v-selectable="selected" data-selecting="selecting" id="app">
+<div v-selectable="{ 
+         selectedGetter: selectedGetter, 
+         selectedSetter: selectedSetter, 
+         selectingSetter: selectingSetter
+         }" id="app">
         <div class="selection"></div>
         <div v-for="(i, item) in items"
              :class="{ selected: !!selected[i], selecting: !!selecting[i] }"
