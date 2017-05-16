@@ -450,6 +450,7 @@ exports.default = selectable;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.setSelectableItems = setSelectableItems;
 
 var _selectable = __webpack_require__(0);
 
@@ -506,6 +507,23 @@ var vueSelectable = {
 };
 
 exports.default = vueSelectable;
+
+/**
+ *
+ * @param {HTMLElement} el Element where v-selectable directive applied
+ * @param {string} itemSelector CSS selector of elements to be used as selectable items
+ * @return {number} number of selectable items or -1 if
+ */
+
+function setSelectableItems(el, itemSelector) {
+    if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        var items = Array.prototype.slice.call(el.querySelectorAll(itemSelector || el.dataset.items || '.selectable'));
+        el.selectable.setSelectables(items);
+        return items.length;
+    } else {
+        return -1;
+    }
+}
 
 /***/ })
 /******/ ]);

@@ -57,3 +57,19 @@ const vueSelectable = {
 };
 
 export default vueSelectable;
+
+/**
+ *
+ * @param {HTMLElement} el Element where v-selectable directive applied
+ * @param {string} itemSelector CSS selector of elements to be used as selectable items
+ * @return {number} number of selectable items or -1 if
+ */
+export function setSelectableItems(el, itemSelector) {
+    if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        let items = Array.prototype.slice.call(el.querySelectorAll(itemSelector || el.dataset.items || '.selectable'));
+        el.selectable.setSelectables(items);
+        return items.length;
+    } else {
+        return -1;
+    }
+}

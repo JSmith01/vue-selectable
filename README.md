@@ -66,6 +66,10 @@ new Vue({
 });
 ```
 
+Selection items list in directive can be updated by calling `setSelectableItems(el, itemSelector)`,
+where `el` is element where directive applied. Optional argument `itemSelector` can be used to change
+selectable items selector. Function returns number of selectable items added or -1 in case of error.
+
 ## Options
 
 `v-selectable` requires one mandatory parameter - directive parameter - object with 3 functions,
