@@ -120,7 +120,7 @@
 
             invertSelection: function () {
                 this.selected = (this.selected.length > 0) ?
-                    this.selected.map(i => !i) :
+                    this.selected.map(function (i) { return !i; }) :
                     new Array(this.persons.length).fill(true);
             },
 

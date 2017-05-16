@@ -1,3 +1,19 @@
+function objectAssignSimple(source) {
+    if (arguments.length > 1) {
+        for (let i = 1; i < arguments.length; i++) {
+            if (typeof arguments[i] !== 'object') {
+                continue;
+            }
+            let keys = Object.keys(arguments[i]);
+            for (let j = 0; j < keys.length; j++) {
+                source[keys[j]] = arguments[i][keys[j]];
+            }
+        }
+    }
+}
+
+const objectAssign = Object.assign || objectAssignSimple;
+
 class selectable {
     /**
      *
@@ -5,7 +21,7 @@ class selectable {
      * @param {Object} options misc selection options
      */
     constructor(boundingBox = document, options = {}) {
-        Object.assign(this, {
+        objectAssign(this, {
             selectBox: null,
             selectBoxSelector: '.selection',
             rootElement: document,
@@ -169,7 +185,7 @@ class selectable {
     static absBox(element) {
         let box = element.getBoundingClientRect();
 
-        return { top: box.top + window.scrollY, left: box.left + window.scrollX, width: box.width, height: box.height };
+        return { top: box.top + window.pageYOffset, left: box.left + window.pageXOffset , width: box.width, height: box.height };
     }
 
     /**

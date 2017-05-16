@@ -12,6 +12,7 @@ Now it supports plain mouse selection and adding to previously selected values w
 
 * vue: ^1.0
 * vue2: ^2.0
+* Browsers - briefly tested on Chrome 58, IE 11, Firefox 53
 
 ## Install
 

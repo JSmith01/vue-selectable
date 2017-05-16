@@ -93,6 +93,14 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function objectAssignSimple(source) {
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {}
+    }
+}
+
+var objectAssign = Object.assign || __webpack_require__(2);
+
 var selectable = function () {
     /**
      *
@@ -107,7 +115,7 @@ var selectable = function () {
 
         _classCallCheck(this, selectable);
 
-        Object.assign(this, {
+        objectAssign(this, {
             selectBox: null,
             selectBoxSelector: '.selection',
             rootElement: document,
@@ -411,7 +419,7 @@ var selectable = function () {
         value: function absBox(element) {
             var box = element.getBoundingClientRect();
 
-            return { top: box.top + window.scrollY, left: box.left + window.scrollX, width: box.width, height: box.height };
+            return { top: box.top + window.pageYOffset, left: box.left + window.pageXOffset, width: box.width, height: box.height };
         }
     }]);
 
@@ -453,7 +461,7 @@ var vueSelectable = {
                 selectedGetter: arg.selectedGetter,
                 selectingSetter: arg.selectingSetter
             });
-            el.selectable.setSelectables(Array.from(el.querySelectorAll(el.dataset.items || '.selectable')));
+            el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(el.dataset.items || '.selectable')));
         } else {
             // Vue.js v1
             var params = this.el.dataset;
@@ -461,7 +469,7 @@ var vueSelectable = {
                 boundingBoxSelector: params.constraint,
                 selectBoxSelector: params.box || '.selection'
             });
-            this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+            this.el.selectable.setSelectables(Array.prototype.slice.call(this.el.querySelectorAll(params.items || '.selectable')));
         }
     },
     update: function update(value) {
@@ -486,6 +494,103 @@ var vueSelectable = {
 };
 
 exports.default = vueSelectable;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
 
 /***/ })
 /******/ ]);

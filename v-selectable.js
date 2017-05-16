@@ -19,7 +19,7 @@ const vueSelectable = {
                     selectingSetter: arg.selectingSetter
                 }
             );
-            el.selectable.setSelectables(Array.from(el.querySelectorAll(el.dataset.items || '.selectable')));
+            el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(el.dataset.items || '.selectable')));
         } else {
             // Vue.js v1
             let params = this.el.dataset;
@@ -30,7 +30,7 @@ const vueSelectable = {
                     selectBoxSelector: params.box || '.selection'
                 }
             );
-            this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+            this.el.selectable.setSelectables(Array.prototype.slice.call(this.el.querySelectorAll(params.items || '.selectable')));
         }
     },
 

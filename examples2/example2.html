@@ -110,27 +110,27 @@
         },
 
         methods: {
-            clearSelection() {
+            clearSelection: function () {
                 this.selected = [];
             },
 
-            selectAll() {
+            selectAll: function () {
                 this.selected = new Array(this.persons.length).fill(true);
             },
 
-            invertSelection() {
+            invertSelection: function () {
                 this.selected = (this.selected.length > 0) ?
-                    this.selected.map(i => !i) :
+                    this.selected.map(function (i) { return !i; }) :
                     new Array(this.persons.length).fill(true);
             },
 
-            selectedGetter() { return this.selected; },
+            selectedGetter: function () { return this.selected; },
 
-            selectedSetter(v) {
+            selectedSetter: function (v) {
                 this.selected = v;
             },
 
-            selectingSetter(v) { this.selecting = v; }
+            selectingSetter: function (v) { this.selecting = v; }
         },
 
         directives: {
