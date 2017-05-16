@@ -56,15 +56,17 @@
             selected: [],
             selecting: []
         },
+
+        methods: {
+            selectedGetter: function () { return this.selected; },
+
+            selectedSetter: function (v) { this.selected = v; },
+
+            selectingSetter: function (v) { this.selecting = v; }
+        },
+
         directives: {
             selectable: vueSelectable.default
-        },
-        methods: {
-            selectedGetter() { return this.selected; },
-
-            selectedSetter(v) { this.selected = v; },
-
-            selectingSetter(v) { this.selecting = v; }
         }
     });
 </script>

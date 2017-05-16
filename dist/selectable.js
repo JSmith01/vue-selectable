@@ -438,13 +438,11 @@ var _selectable2 = _interopRequireDefault(_selectable);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var vueSelectable = {
-    twoWay: true,
+    twoWay: false,
 
-    params: ['selecting', 'items', 'box', 'constraint'],
+    params: ['items', 'box', 'constraint'],
 
     bind: function bind(el, binding) {
-        var _this = this;
-
         // Vue.js v2
         if (!!el && !!binding) {
             var arg = binding.value;
@@ -461,18 +459,17 @@ var vueSelectable = {
             var params = this.el.dataset;
             this.el.selectable = new _selectable2.default(!!this.params.constraint ? document.querySelector(params.constraint) : this.el, {
                 boundingBoxSelector: params.constraint,
-                selectBoxSelector: params.box || '.selection',
-                selectedSetter: function selectedSetter(v) {
-                    return _this.vm.$set(_this.expression, v);
-                },
-                selectedGetter: function selectedGetter() {
-                    return _this.vm.$get(_this.expression);
-                },
-                selectingSetter: !!params && !!params.selecting ? function (v) {
-                    return _this.vm.$set(params.selecting, v);
-                } : null
+                selectBoxSelector: params.box || '.selection'
             });
             this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+        }
+    },
+    update: function update(value) {
+        if (!!this && !!this.el && !this.el.selectable.selectedSetter) {
+            // Vue.js v1 - init setters/getters
+            this.el.selectable.selectedSetter = value.selectedSetter;
+            this.el.selectable.selectedGetter = value.selectedGetter;
+            this.el.selectable.selectingSetter = value.selectingSetter;
         }
     },
     unbind: function unbind(el) {

@@ -1,9 +1,9 @@
 import selectable from './selectable';
 
 const vueSelectable = {
-    twoWay: true,
+    twoWay: false,
 
-    params: ['selecting', 'items', 'box', 'constraint'],
+    params: ['items', 'box', 'constraint'],
 
     bind(el, binding) {
         // Vue.js v2
@@ -27,14 +27,19 @@ const vueSelectable = {
                 !!this.params.constraint ? document.querySelector(params.constraint) : this.el,
                 {
                     boundingBoxSelector: params.constraint,
-                    selectBoxSelector: params.box || '.selection',
-                    selectedSetter: v => this.vm.$set(this.expression, v),
-                    selectedGetter: () => this.vm.$get(this.expression),
-                    selectingSetter: (!!params && !!params.selecting) ?
-                        v => this.vm.$set(params.selecting, v) : null
+                    selectBoxSelector: params.box || '.selection'
                 }
             );
             this.el.selectable.setSelectables(Array.from(this.el.querySelectorAll(params.items || '.selectable')));
+        }
+    },
+
+    update(value) {
+        if (!!this && !!this.el && !this.el.selectable.selectedSetter) {
+            // Vue.js v1 - init setters/getters
+            this.el.selectable.selectedSetter = value.selectedSetter;
+            this.el.selectable.selectedGetter = value.selectedGetter;
+            this.el.selectable.selectingSetter = value.selectingSetter;
         }
     },
 

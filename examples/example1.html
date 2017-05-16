@@ -37,7 +37,8 @@
 </head>
 <body>
 <div id="app">
-    <div v-selectable="selected" data-selecting="selecting" class="container">
+    <div v-selectable="{ selectedGetter: selectedGetter, selectedSetter: selectedSetter, selectingSetter: selectingSetter}"
+         class="container">
         <div class="selection"></div>
         <div v-for="i in items" class="selectable" :style="{ top: $index * 100 + 'px' }"
         :class="{ selected: !!selected[$index], selecting: !!selecting[$index] }">
@@ -50,11 +51,27 @@
 <script>
     new Vue({
         el: '#app',
+
         data: {
             items: ['aaa', 'bbb', 'ccc', 'ddd', 'zzz', 'www', 'ggg'],
             selected: [],
             selecting: []
         },
+
+        methods: {
+            selectedGetter: function () {
+                return this.selected;
+            },
+
+            selectedSetter: function (v) {
+                this.selected = v;
+            },
+
+            selectingSetter: function (v) {
+                this.selecting = v;
+            }
+        },
+
         directives: {
             selectable: vueSelectable.default
         }
