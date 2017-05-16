@@ -1,15 +1,17 @@
-function objectAssignSimple(source) {
+function objectAssignSimple(target) {
     if (arguments.length > 1) {
         for (let i = 1; i < arguments.length; i++) {
-            if (typeof arguments[i] !== 'object') {
+            if (typeof arguments[i] !== 'object' || arguments[i] === null) {
                 continue;
             }
             let keys = Object.keys(arguments[i]);
             for (let j = 0; j < keys.length; j++) {
-                source[keys[j]] = arguments[i][keys[j]];
+                target[keys[j]] = arguments[i][keys[j]];
             }
         }
     }
+
+    return target;
 }
 
 const objectAssign = Object.assign || objectAssignSimple;
