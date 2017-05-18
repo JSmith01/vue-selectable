@@ -10,8 +10,8 @@ const vueSelectable = {
         if (!!el && !!binding) {
             let arg = binding.value;
             el.selectable = new selectable(
-                !!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el,
                 {
+                    boundingBox: !!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el,
                     selectBoxSelector: el.dataset.box || '.selection',
                     boundingBoxSelector: el.dataset.constraint,
                     selectedSetter: arg.selectedSetter,
@@ -24,8 +24,8 @@ const vueSelectable = {
             // Vue.js v1
             let params = this.el.dataset;
             this.el.selectable = new selectable(
-                !!this.params.constraint ? document.querySelector(params.constraint) : this.el,
                 {
+                    boundingBox: !!this.params.constraint ? document.querySelector(params.constraint) : this.el,
                     boundingBoxSelector: params.constraint,
                     selectBoxSelector: params.box || '.selection'
                 }

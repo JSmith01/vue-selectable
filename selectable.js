@@ -17,41 +17,88 @@ function objectAssignSimple(target) {
 const objectAssign = Object.assign || objectAssignSimple;
 
 class selectable {
+    selectBox = null;
+    selectBoxSelector = '.selection';
+
     /**
-     *
-     * @param {HTMLElement} boundingBox element that limits where selection can be made
+     * Event listeners are attached to this element
+     * @type {HTMLDocument}
+     */
+    rootElement = document;
+
+    /**
+     * Element that limits where selection can be made
+     * @type {HTMLDocument}
+     */
+    boundingBox = document;
+
+    /**
+     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
+     * @type {HTMLDocument}
+     */
+    boundingBoxSelector = null;
+    dragging = false;
+    startX = null;
+    startY = null;
+    endX = null;
+    endY = null;
+    selectables = [];
+    selected = [];
+
+    /**
+     * Called to pass out list of selected items
+     * @type {Function | null}
+     */
+    selectedSetter = null;
+
+    /**
+     * Called to get list of selected items
+     * @type {Function | null}
+     */
+    selectedGetter = null;
+
+    /**
+     * Called to set list of items under selection box
+     * @type {Function | null}
+     */
+    selectingSetter = null;
+
+    selecting = [];
+    addMode = false;
+
+    handlers = {
+        mousedown: null,
+        mouseup: null,
+        mousemove: null,
+    };
+
+    /**
+     * Add CSS selectedClass to elements currently selected (w/o framework)
+     * @type {boolean}
+     */
+    renderSelected = false;
+
+    /**
+     * Add CSS selectedClass to elements currently under selection box (w/o framework)
+     * @type {boolean}
+     */
+    renderSelecting = false;
+
+    selectingClass = 'selecting';
+    selectedClass = 'selected';
+
+    firstRun = true;
+
+    /**
+     * Initializes selection component
      * @param {Object} options misc selection options
      */
-    constructor(boundingBox = document, options = {}) {
-        objectAssign(this, {
-            selectBox: null,
-            selectBoxSelector: '.selection',
-            rootElement: document,
-            boundingBox,
-            boundingBoxSelector: null,
-            dragging: false,
-            startX: null,
-            startY: null,
-            endX: null,
-            endY: null,
-            selectables: [],
-            selected: [],
-            selectedSetter: null,
-            selectedGetter: null,
-            selectingSetter: null,
-            selecting: [],
-            addMode: false,
-            handlers: {
-                mousedown: this.mouseDown.bind(this),
-                mouseup: this.mouseUp.bind(this),
-                mousemove: this.mouseMove.bind(this),
-            },
-            renderSelected: false,
-            renderSelecting: false,
-            selectingClass: 'selecting',
-            selectedClass: 'selected',
-            firstRun: true
-        }, options);
+    constructor(options = {}) {
+        this.handlers.mousedown = this.mouseDown.bind(this);
+        this.handlers.mouseup = this.mouseUp.bind(this);
+        this.handlers.mousemove = this.mouseMove.bind(this);
+
+        objectAssign(this, options);
 
         Object.keys(this.handlers).forEach(event => this.rootElement.addEventListener(event, this.handlers[event]));
     }

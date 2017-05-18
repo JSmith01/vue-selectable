@@ -114,48 +114,69 @@ function objectAssignSimple(target) {
 var objectAssign = Object.assign || objectAssignSimple;
 
 var selectable = function () {
+
     /**
-     *
-     * @param {HTMLElement} boundingBox element that limits where selection can be made
+     * Initializes selection component
      * @param {Object} options misc selection options
+     */
+
+
+    /**
+     * Add CSS selectedClass to elements currently under selection box (w/o framework)
+     * @type {boolean}
+     */
+
+
+    /**
+     * Called to get list of selected items
+     * @type {Function | null}
+     */
+
+
+    /**
+     * Element that limits where selection can be made
+     * @type {HTMLDocument}
      */
     function selectable() {
         var _this = this;
 
-        var boundingBox = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         _classCallCheck(this, selectable);
 
-        objectAssign(this, {
-            selectBox: null,
-            selectBoxSelector: '.selection',
-            rootElement: document,
-            boundingBox: boundingBox,
-            boundingBoxSelector: null,
-            dragging: false,
-            startX: null,
-            startY: null,
-            endX: null,
-            endY: null,
-            selectables: [],
-            selected: [],
-            selectedSetter: null,
-            selectedGetter: null,
-            selectingSetter: null,
-            selecting: [],
-            addMode: false,
-            handlers: {
-                mousedown: this.mouseDown.bind(this),
-                mouseup: this.mouseUp.bind(this),
-                mousemove: this.mouseMove.bind(this)
-            },
-            renderSelected: false,
-            renderSelecting: false,
-            selectingClass: 'selecting',
-            selectedClass: 'selected',
-            firstRun: true
-        }, options);
+        this.selectBox = null;
+        this.selectBoxSelector = '.selection';
+        this.rootElement = document;
+        this.boundingBox = document;
+        this.boundingBoxSelector = null;
+        this.dragging = false;
+        this.startX = null;
+        this.startY = null;
+        this.endX = null;
+        this.endY = null;
+        this.selectables = [];
+        this.selected = [];
+        this.selectedSetter = null;
+        this.selectedGetter = null;
+        this.selectingSetter = null;
+        this.selecting = [];
+        this.addMode = false;
+        this.handlers = {
+            mousedown: null,
+            mouseup: null,
+            mousemove: null
+        };
+        this.renderSelected = false;
+        this.renderSelecting = false;
+        this.selectingClass = 'selecting';
+        this.selectedClass = 'selected';
+        this.firstRun = true;
+
+        this.handlers.mousedown = this.mouseDown.bind(this);
+        this.handlers.mouseup = this.mouseUp.bind(this);
+        this.handlers.mousemove = this.mouseMove.bind(this);
+
+        objectAssign(this, options);
 
         Object.keys(this.handlers).forEach(function (event) {
             return _this.rootElement.addEventListener(event, _this.handlers[event]);
@@ -164,6 +185,36 @@ var selectable = function () {
 
     /**
      * Removes all registered event handlers and clears references to DOM nodes
+     */
+
+
+    /**
+     * Add CSS selectedClass to elements currently selected (w/o framework)
+     * @type {boolean}
+     */
+
+
+    /**
+     * Called to set list of items under selection box
+     * @type {Function | null}
+     */
+
+
+    /**
+     * Called to pass out list of selected items
+     * @type {Function | null}
+     */
+
+
+    /**
+     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
+     * @type {HTMLDocument}
+     */
+
+
+    /**
+     * Event listeners are attached to this element
+     * @type {HTMLDocument}
      */
 
 
@@ -467,7 +518,8 @@ var vueSelectable = {
         // Vue.js v2
         if (!!el && !!binding) {
             var arg = binding.value;
-            el.selectable = new _selectable2.default(!!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el, {
+            el.selectable = new _selectable2.default({
+                boundingBox: !!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el,
                 selectBoxSelector: el.dataset.box || '.selection',
                 boundingBoxSelector: el.dataset.constraint,
                 selectedSetter: arg.selectedSetter,
@@ -478,7 +530,8 @@ var vueSelectable = {
         } else {
             // Vue.js v1
             var params = this.el.dataset;
-            this.el.selectable = new _selectable2.default(!!this.params.constraint ? document.querySelector(params.constraint) : this.el, {
+            this.el.selectable = new _selectable2.default({
+                boundingBox: !!this.params.constraint ? document.querySelector(params.constraint) : this.el,
                 boundingBoxSelector: params.constraint,
                 selectBoxSelector: params.box || '.selection'
             });
