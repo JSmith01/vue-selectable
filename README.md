@@ -77,6 +77,9 @@ selectable items selector. Function returns number of selectable items added or 
 status - array of boolean), 'selecting' (array of items selection status during selection drag, 
 array of boolean; must be used to display realtime selection visual feedback). 
 
+`selectedSetter` function also receives "selecting" array as a second argument. This could help when 
+we need some custom selection logic.
+
 If you have 5 selectable items, `selected` array will have 5 elements initially
 set to `false`. When user selects some item(s), values change to `true` accordingly. The same applies
 for `selecting` array.

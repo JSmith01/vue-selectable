@@ -245,7 +245,7 @@ var selectable = function () {
                 return false;
             });
             if (typeof this.selectedSetter === 'function') {
-                this.selectedSetter(this.selected);
+                this.selectedSetter(this.selected, this.selected);
             }
         }
 
@@ -290,7 +290,7 @@ var selectable = function () {
             if (!this.addMode) {
                 this.selected = this.selecting;
                 if (typeof this.selectedSetter === 'function') {
-                    this.selectedSetter(this.selected);
+                    this.selectedSetter(this.selected, this.selecting);
                 }
             } else if (typeof this.selectedGetter === 'function') {
                 var gotSelection = this.selectedGetter() || [];
@@ -337,7 +337,7 @@ var selectable = function () {
                     return v || _this3.selecting[i];
                 }) : this.selecting;
                 if (typeof this.selectedSetter === 'function') {
-                    this.selectedSetter(this.selected);
+                    this.selectedSetter(this.selected, this.selecting);
                 }
                 this.selecting = [];
                 if (this.selectingSetter) {

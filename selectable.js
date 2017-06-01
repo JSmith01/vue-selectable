@@ -122,7 +122,7 @@ class selectable {
         this.selectables = elements;
         this.selected = elements.map(i => false);
         if (typeof this.selectedSetter === 'function') {
-            this.selectedSetter(this.selected);
+            this.selectedSetter(this.selected, this.selected);
         }
     }
 
@@ -158,7 +158,7 @@ class selectable {
         if (!this.addMode) {
             this.selected = this.selecting;
             if (typeof this.selectedSetter === 'function') {
-                this.selectedSetter(this.selected);
+                this.selectedSetter(this.selected, this.selecting);
             }
         } else if (typeof this.selectedGetter === 'function') {
             let gotSelection = this.selectedGetter() || [];
@@ -189,7 +189,7 @@ class selectable {
             }
             this.selected = this.addMode ? this.selected.map((v, i) => v || this.selecting[i]) : this.selecting;
             if (typeof this.selectedSetter === 'function') {
-                this.selectedSetter(this.selected);
+                this.selectedSetter(this.selected, this.selecting);
             }
             this.selecting = [];
             if (this.selectingSetter) {
