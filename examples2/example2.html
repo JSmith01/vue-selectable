@@ -22,6 +22,12 @@
         #app table > thead > tr > th:first-child,
         #app table > tbody > tr > td:first-child {
             width: 300px;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* Styles for v-selectable display */
@@ -78,6 +84,7 @@
             <tr v-for="(person, i) in persons" :key="person.id" :class="{ hidden: showHidden && person.hidden }">
                 <td :class="{ selected: !!selected[i], selecting: !!selecting[i] }" class="item">
                     {{ person.name }}
+                    <button @click="googleIt(person)" @mousedown.stop>google it</button>
                 </td>
                 <td>{{ person.surname }}</td>
                 <td>{{ person.age }}</td>
@@ -98,11 +105,25 @@
 
         data: {
             persons: [
-                { id: 1, name: 'Ronald', surname: 'Reugan', age: 85, hidden: false },
-                { id: 2, name: 'Bill', surname: 'Clinton', age: 50, hidden: true },
-                { id: 3, name: 'George', surname: 'Bush', age: 49, hidden: false },
-                { id: 4, name: 'Barack', surname: 'Obama', age: 25, hidden: true },
-                { id: 5, name: 'Donald', surname: 'Trump', age: 70, hidden: false },
+                { id: 1, name: 'William', surname: 'Taft', age: 72, hidden: true },
+                { id: 2, name: 'Woodrow', surname: 'Wilson', age: 67, hidden: false },
+                { id: 3, name: 'Warren', surname: 'Harding', age: 57, hidden: true },
+                { id: 4, name: 'Calvin', surname: 'Coolidge', age: 60, hidden: true },
+                { id: 5, name: 'Herbert', surname: 'Hoover', age: 90, hidden: true },
+                { id: 6, name: 'Franklin', surname: 'Roosevelt', age: 63, hidden: false },
+                { id: 7, name: 'Harry', surname: 'Truman', age: 88, hidden: false },
+                { id: 8, name: 'Dwight', surname: 'Eisenhower', age: 78, hidden: true },
+                { id: 9, name: 'John', surname: 'Kennedy', age: 46, hidden: false },
+                { id: 10, name: 'Lyndon', surname: 'Johnson', age: 64, hidden: false },
+                { id: 11, name: 'Richard', surname: 'Nixon', age: 81, hidden: true },
+                { id: 12, name: 'Gerald', surname: 'Ford', age: 93, hidden: true },
+                { id: 13, name: 'Jimmy', surname: 'Carter', age: 92, hidden: false },
+                { id: 14, name: 'Ronald', surname: 'Reagan', age: 93, hidden: true },
+                { id: 15, name: 'George', surname: 'Bush', age: 92, hidden: true },
+                { id: 16, name: 'Bill', surname: 'Clinton', age: 70, hidden: false },
+                { id: 17, name: 'George', surname: 'Bush', age: 70, hidden: true },
+                { id: 18, name: 'Barack', surname: 'Obama', age: 55, hidden: false },
+                { id: 19, name: 'Donald', surname: 'Trump', age: 70, hidden: true },
             ],
             selected: [],
             selecting: [],
@@ -110,6 +131,10 @@
         },
 
         methods: {
+            googleIt: function (person) {
+                window.open('http://www.google.com/search?q=' + person.name + '+' + person.surname, '_blank');
+            },
+
             clearSelection: function () {
                 this.selected = [];
             },

@@ -142,7 +142,6 @@ class selectable {
             e.pageY < bb.top || e.pageY > bb.height + bb.top) {
             return;
         }
-        e.preventDefault();
         let [x, y] = this.bound(e);
         this.selectBox = document.querySelector(this.selectBoxSelector);
         this.startX = x;
@@ -177,7 +176,6 @@ class selectable {
             if (e.button !== 0) {
                 return;
             }
-            e.preventDefault();
             let [x, y] = this.bound(e);
             this.endX = x;
             this.endY = y;

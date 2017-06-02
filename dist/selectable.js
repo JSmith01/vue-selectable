@@ -267,7 +267,6 @@ var selectable = function () {
             if (e.pageX < bb.left || e.pageX > bb.width + bb.left || e.pageY < bb.top || e.pageY > bb.height + bb.top) {
                 return;
             }
-            e.preventDefault();
 
             var _bound = this.bound(e),
                 _bound2 = _slicedToArray(_bound, 2),
@@ -316,7 +315,6 @@ var selectable = function () {
                 if (e.button !== 0) {
                     return;
                 }
-                e.preventDefault();
 
                 var _bound3 = this.bound(e),
                     _bound4 = _slicedToArray(_bound3, 2),
