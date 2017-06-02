@@ -1,4 +1,15 @@
-import selectable from './selectable';
+import selectable, { objectAssignSimple } from './selectable';
+
+const objectAssign = Object.assign || objectAssignSimple;
+
+function initSelectable(el, params, arg) {
+    el.selectable = new selectable(objectAssign({
+        boundingBox: !!params.constraint ? document.querySelector(params.constraint) : el,
+        selectBoxSelector: params.box || '.selection',
+        boundingBoxSelector: params.constraint
+    }, arg));
+    el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(params.items || '.selectable')));
+}
 
 const vueSelectable = {
     twoWay: false,
@@ -6,63 +17,38 @@ const vueSelectable = {
     params: ['items', 'box', 'constraint'],
 
     bind(el, binding) {
-        // Vue.js v2
+        let arg, params;
         if (!!el && !!binding) {
-            let arg = binding.value;
-            el.selectable = new selectable(
-                {
-                    boundingBox: !!el.dataset.constraint ? document.querySelector(el.dataset.constraint) : el,
-                    selectBoxSelector: el.dataset.box || '.selection',
-                    boundingBoxSelector: el.dataset.constraint,
-                    selectedSetter: arg.selectedSetter,
-                    selectedGetter: arg.selectedGetter,
-                    selectingSetter: arg.selectingSetter
-                }
-            );
-            el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(el.dataset.items || '.selectable')));
-        } else {
-            // Vue.js v1
-            let params = this.el.dataset;
-            this.el.selectable = new selectable(
-                {
-                    boundingBox: !!this.params.constraint ? document.querySelector(params.constraint) : this.el,
-                    boundingBoxSelector: params.constraint,
-                    selectBoxSelector: params.box || '.selection'
-                }
-            );
-            this.el.selectable.setSelectables(Array.prototype.slice.call(this.el.querySelectorAll(params.items || '.selectable')));
+            // Vue.js v2
+            arg = binding.value;
+            params = el.dataset;
+            initSelectable(el, params, arg);
         }
     },
 
     update(value) {
-        if (!!this && !!this.el && !this.el.selectable.selectedSetter) {
-            // Vue.js v1 - init setters/getters
-            this.el.selectable.selectedSetter = value.selectedSetter;
-            this.el.selectable.selectedGetter = value.selectedGetter;
-            this.el.selectable.selectingSetter = value.selectingSetter;
+        if (!!this && !!this.el && !this.el.selectable) {
+            // Vue.js v1 - init selectable
+            initSelectable(this.el, this.el.dataset, value);
         }
     },
 
     unbind(el) {
-        if (el) {
-            // Vue.js v2
-            el.selectable.detach();
-            el.selectable = null;
-        } else {
-            // Vue.js v1
-            this.el.selectable.detach();
-            this.el.selectable = null;
+        if (!el) {
+            el = this.el;
         }
+        el.selectable.detach();
+        el.selectable = null;
     }
 };
 
 export default vueSelectable;
 
 /**
- *
+ * Allows to change internal selectable items list
  * @param {HTMLElement} el Element where v-selectable directive applied
- * @param {string} itemSelector CSS selector of elements to be used as selectable items
- * @return {number} number of selectable items or -1 if
+ * @param {string} itemSelector (optional) CSS selector of elements to be used as selectable items
+ * @return {number} number of selectable items or -1 if no selectable component found
  */
 export function setSelectableItems(el, itemSelector) {
     if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {

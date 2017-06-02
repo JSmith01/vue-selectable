@@ -1,4 +1,4 @@
-function objectAssignSimple(target) {
+export function objectAssignSimple(target) {
     if (arguments.length > 1) {
         for (let i = 1; i < arguments.length; i++) {
             if (typeof arguments[i] !== 'object' || arguments[i] === null) {
@@ -16,7 +16,7 @@ function objectAssignSimple(target) {
 
 const objectAssign = Object.assign || objectAssignSimple;
 
-class selectable {
+export default class selectable {
     selectBox = null;
     selectBoxSelector = '.selection';
 
@@ -312,5 +312,3 @@ class selectable {
         this.renderSelection();
     }
 }
-
-export default selectable;

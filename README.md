@@ -84,6 +84,11 @@ If you have 5 selectable items, `selected` array will have 5 elements initially
 set to `false`. When user selects some item(s), values change to `true` accordingly. The same applies
 for `selecting` array.
 
+Also you can specify additional parameters in the object for JS `selectable` component underneath.
+For example you can set `rootElement` to some element other than "document" 
+(to attach event listeners to it). Or set `renderSelecting/renderSelection` options to true to have
+directive manage CSS classes instead of Vue.js framework.
+
 Other parameters available:
 * `data-items` - CSS selector to identify selectable items, by default it is set to `.selectable`
   (elements with CSS class "selectable")
