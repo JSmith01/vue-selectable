@@ -66,6 +66,8 @@ export default class selectable {
     selecting = [];
     addMode = false;
 
+    disableTextSelection = true;
+
     handlers = {
         mousedown: null,
         mouseup: null,
@@ -108,6 +110,9 @@ export default class selectable {
      */
     detach() {
         Object.keys(this.handlers).forEach(event => this.rootElement.removeEventListener(event, this.handlers[event]));
+        if (this.disableTextSelection && this.dragging) {
+            this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
+        }
         this.selectables = [];
         this.selectBox = null;
         this.boundingBox = null;
@@ -127,6 +132,16 @@ export default class selectable {
     }
 
     /**
+     * Disables text selection (as a default browser action)
+     * @param {Event} e
+     * @return {boolean}
+     */
+    static disableTextSelection(e) {
+        e.preventDefault();
+        return false;
+    }
+
+    /**
      * Mouse key down handler
      * @param {MouseEvent} e
      */
@@ -141,6 +156,9 @@ export default class selectable {
         if (e.pageX < bb.left || e.pageX > bb.width + bb.left ||
             e.pageY < bb.top || e.pageY > bb.height + bb.top) {
             return;
+        }
+        if (this.disableTextSelection) {
+            this.rootElement.addEventListener('selectstart', selectable.disableTextSelection);
         }
         let [x, y] = this.bound(e);
         this.selectBox = document.querySelector(this.selectBoxSelector);
@@ -175,6 +193,9 @@ export default class selectable {
         if (this.dragging) {
             if (e.button !== 0) {
                 return;
+            }
+            if (this.disableTextSelection) {
+                this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
             }
             let [x, y] = this.bound(e);
             this.endX = x;

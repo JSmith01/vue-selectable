@@ -130,13 +130,25 @@ var selectable = function () {
 
 
     /**
-     * Called to get list of selected items
+     * Called to set list of items under selection box
      * @type {Function | null}
      */
 
 
     /**
-     * Element that limits where selection can be made
+     * Called to pass out list of selected items
+     * @type {Function | null}
+     */
+
+
+    /**
+     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
+     * @type {HTMLDocument}
+     */
+
+
+    /**
+     * Event listeners are attached to this element
      * @type {HTMLDocument}
      */
     function selectable() {
@@ -163,6 +175,7 @@ var selectable = function () {
         this.selectingSetter = null;
         this.selecting = [];
         this.addMode = false;
+        this.disableTextSelection = true;
         this.handlers = {
             mousedown: null,
             mouseup: null,
@@ -197,25 +210,13 @@ var selectable = function () {
 
 
     /**
-     * Called to set list of items under selection box
+     * Called to get list of selected items
      * @type {Function | null}
      */
 
 
     /**
-     * Called to pass out list of selected items
-     * @type {Function | null}
-     */
-
-
-    /**
-     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
-     * @type {HTMLDocument}
-     */
-
-
-    /**
-     * Event listeners are attached to this element
+     * Element that limits where selection can be made
      * @type {HTMLDocument}
      */
 
@@ -228,6 +229,9 @@ var selectable = function () {
             Object.keys(this.handlers).forEach(function (event) {
                 return _this2.rootElement.removeEventListener(event, _this2.handlers[event]);
             });
+            if (this.disableTextSelection && this.dragging) {
+                this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
+            }
             this.selectables = [];
             this.selectBox = null;
             this.boundingBox = null;
@@ -252,12 +256,19 @@ var selectable = function () {
         }
 
         /**
-         * Mouse key down handler
-         * @param {MouseEvent} e
+         * Disables text selection (as a default browser action)
+         * @param {Event} e
+         * @return {boolean}
          */
 
     }, {
         key: 'mouseDown',
+
+
+        /**
+         * Mouse key down handler
+         * @param {MouseEvent} e
+         */
         value: function mouseDown(e) {
             if (e.button !== 0) {
                 return;
@@ -268,6 +279,9 @@ var selectable = function () {
             var bb = selectable.absBox(this.boundingBox);
             if (e.pageX < bb.left || e.pageX > bb.width + bb.left || e.pageY < bb.top || e.pageY > bb.height + bb.top) {
                 return;
+            }
+            if (this.disableTextSelection) {
+                this.rootElement.addEventListener('selectstart', selectable.disableTextSelection);
             }
 
             var _bound = this.bound(e),
@@ -316,6 +330,9 @@ var selectable = function () {
             if (this.dragging) {
                 if (e.button !== 0) {
                     return;
+                }
+                if (this.disableTextSelection) {
+                    this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
                 }
 
                 var _bound3 = this.bound(e),
@@ -478,6 +495,12 @@ var selectable = function () {
             this.renderSelection();
         }
     }], [{
+        key: 'disableTextSelection',
+        value: function disableTextSelection(e) {
+            e.preventDefault();
+            return false;
+        }
+    }, {
         key: 'absBox',
         value: function absBox(element) {
             var box = element.getBoundingClientRect();
