@@ -130,25 +130,31 @@ var selectable = function () {
 
 
     /**
-     * Called to set list of items under selection box
+     *  Timeout ID (from setInterval() call)
+     * @type {null|object}
+     */
+
+
+    /**
+     * Distance from borders (in px) when scroll begins to work
+     * @type {number}
+     */
+
+
+    /**
+     * Scrolling element that contains
+     * @type {HTMLElement|null}
+     */
+
+
+    /**
+     * Called to get list of selected items
      * @type {Function | null}
      */
 
 
     /**
-     * Called to pass out list of selected items
-     * @type {Function | null}
-     */
-
-
-    /**
-     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
-     * @type {HTMLDocument}
-     */
-
-
-    /**
-     * Event listeners are attached to this element
+     * Element that limits where selection can be made
      * @type {HTMLDocument}
      */
     function selectable() {
@@ -181,6 +187,11 @@ var selectable = function () {
             mouseup: null,
             mousemove: null
         };
+        this.scrollingFrame = null;
+        this.scrollSpeed = 10;
+        this.scrollDistance = 10;
+        this.scrollDocumentEnabled = true;
+        this.scrollRepeater = null;
         this.renderSelected = false;
         this.renderSelecting = false;
         this.selectingClass = 'selecting';
@@ -210,13 +221,37 @@ var selectable = function () {
 
 
     /**
-     * Called to get list of selected items
+     * Enable/disable document scrolling while selecting items, ignored when scrollingFrame is configured
+     * @type {boolean}
+     */
+
+
+    /**
+     * Speed of scroll (in px per 16ms)
+     * @type {number}
+     */
+
+
+    /**
+     * Called to set list of items under selection box
      * @type {Function | null}
      */
 
 
     /**
-     * Element that limits where selection can be made
+     * Called to pass out list of selected items
+     * @type {Function | null}
+     */
+
+
+    /**
+     * CSS selector of element that limits where selection can be made (has higher priority than boundingBox)
+     * @type {HTMLDocument}
+     */
+
+
+    /**
+     * Event listeners are attached to this element
      * @type {HTMLDocument}
      */
 
@@ -231,6 +266,9 @@ var selectable = function () {
             });
             if (this.disableTextSelection && this.dragging) {
                 this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
+            }
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
             }
             this.selectables = [];
             this.selectBox = null;
@@ -283,6 +321,10 @@ var selectable = function () {
             if (this.disableTextSelection) {
                 this.rootElement.addEventListener('selectstart', selectable.disableTextSelection);
             }
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
+                this.scrollRepeater = null;
+            }
 
             var _bound = this.bound(e),
                 _bound2 = _slicedToArray(_bound, 2),
@@ -290,6 +332,9 @@ var selectable = function () {
                 y = _bound2[1];
 
             this.selectBox = document.querySelector(this.selectBoxSelector);
+            if (this.scrollingFrame) {
+                y += this.scrollingFrame.scrollTop;
+            }
             this.startX = x;
             this.startY = y;
             this.endX = x;
@@ -342,6 +387,13 @@ var selectable = function () {
 
                 this.endX = x;
                 this.endY = y;
+                if (this.scrollingFrame) {
+                    this.endY += this.scrollingFrame.scrollTop;
+                }
+                if (this.scrollRepeater) {
+                    clearInterval(this.scrollRepeater);
+                    this.scrollRepeater = null;
+                }
                 this.dragging = false;
                 this.updateSelection();
                 if (typeof this.selectedGetter === 'function') {
@@ -380,8 +432,79 @@ var selectable = function () {
 
                 this.endX = x;
                 this.endY = y;
+                if (this.scrollRepeater) {
+                    clearInterval(this.scrollRepeater);
+                    this.scrollRepeater = null;
+                }
+                if (this.scrollingFrame) {
+                    this.endY += this.scrollFrame(e);
+                } else if (this.scrollDocumentEnabled) {
+                    this.scrollDocument(e);
+                }
                 this.updateSelection();
                 this.render();
+            }
+        }
+
+        /**
+         * Scroll frame with selectable items when mouse reaches one of edges
+         * @param {MouseEvent} e
+         * @return {int}
+         */
+
+    }, {
+        key: 'scrollFrame',
+        value: function scrollFrame(e) {
+            var _this4 = this;
+
+            var sf = this.scrollingFrame;
+            var frame = sf.getBoundingClientRect();
+            var diff = 0;
+            if (e.pageY >= frame.bottom - this.scrollDistance) {
+                diff = this.scrollSpeed;
+            } else if (e.pageY <= frame.top + this.scrollDistance) {
+                diff = -this.scrollSpeed;
+            }
+            sf.scrollTop += diff;
+
+            // repeat mouse move event if mouse were close to borders
+            if (e.pageY >= frame.bottom || e.pageY <= frame.top) {
+                if (this.scrollRepeater) {
+                    clearInterval(this.scrollRepeater);
+                }
+                this.scrollRepeater = setInterval(function () {
+                    return _this4.mouseMove(e);
+                }, 16);
+            }
+
+            return sf.scrollTop;
+        }
+
+        /**
+         * Scroll document with selectable items when mouse reaches one of edges
+         * @param {MouseEvent} e
+         */
+
+    }, {
+        key: 'scrollDocument',
+        value: function scrollDocument(e) {
+            var _this5 = this;
+
+            var diff = 0;
+            if (this.endY <= window.pageYOffset) {
+                diff = -this.scrollSpeed;
+            } else if (this.endY >= window.pageYOffset + window.innerHeight) {
+                diff = this.scrollSpeed;
+            }
+
+            if (diff !== 0) {
+                window.scrollBy(0, diff);
+                if (this.scrollRepeater) {
+                    clearInterval(this.scrollRepeater);
+                }
+                this.scrollRepeater = setInterval(function () {
+                    return _this5.mouseMove(e);
+                }, 16);
             }
         }
 
@@ -413,6 +536,7 @@ var selectable = function () {
          */
         value: function updateSelection() {
             var s = this.getSelectionBox();
+            s.top -= this.scrollingFrame ? this.scrollingFrame.scrollTop : 0;
             this.selecting = this.selectables.map(selectable.absBox).map(function (b) {
                 return Math.abs((s.left - b.left) * 2 + s.width - b.width) < s.width + b.width && Math.abs((s.top - b.top) * 2 + s.height - b.height) < s.height + b.height;
             });
@@ -444,24 +568,24 @@ var selectable = function () {
     }, {
         key: 'renderSelection',
         value: function renderSelection() {
-            var _this4 = this;
+            var _this6 = this;
 
             if (!this.renderSelected && !this.renderSelecting) {
                 return;
             }
             this.selectables.forEach(function (e, i) {
-                if (_this4.renderSelecting) {
-                    if (_this4.dragging && !!_this4.selecting[i]) {
-                        e.classList.add(_this4.selectingClass);
+                if (_this6.renderSelecting) {
+                    if (_this6.dragging && !!_this6.selecting[i]) {
+                        e.classList.add(_this6.selectingClass);
                     } else {
-                        e.classList.remove(_this4.selectingClass);
+                        e.classList.remove(_this6.selectingClass);
                     }
                 }
-                if (_this4.renderSelected) {
-                    if (!_this4.selected[i]) {
-                        e.classList.remove(_this4.selectedClass);
+                if (_this6.renderSelected) {
+                    if (!_this6.selected[i]) {
+                        e.classList.remove(_this6.selectedClass);
                     } else {
-                        e.classList.add(_this4.selectedClass);
+                        e.classList.add(_this6.selectedClass);
                     }
                 }
             });
@@ -486,7 +610,7 @@ var selectable = function () {
                     this.firstRun = false;
                 }
                 elStyle.left = box.left - bb.left + this.selectBoxStartX + 'px';
-                elStyle.top = box.top - bb.top + this.selectBoxStartY + 'px';
+                elStyle.top = box.top - bb.top + this.selectBoxStartY - (this.scrollingFrame ? this.scrollingFrame.scrollTop : 0) + 'px';
                 elStyle.width = box.width + 'px';
                 elStyle.height = box.height + 'px';
             } else {
@@ -525,6 +649,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.setSelectableItems = setSelectableItems;
+exports.setOptions = setOptions;
 
 var _selectable = __webpack_require__(0);
 
@@ -589,6 +714,17 @@ function setSelectableItems(el, itemSelector) {
         return items.length;
     } else {
         return -1;
+    }
+}
+
+/**
+ * Sets options to directive
+ * @param {HTMLElement} el Element where v-selectable directive applied
+ * @param {object} options
+ */
+function setOptions(el, options) {
+    if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        objectAssign(el.selectable, options);
     }
 }
 

@@ -59,3 +59,14 @@ export function setSelectableItems(el, itemSelector) {
         return -1;
     }
 }
+
+/**
+ * Sets options to directive
+ * @param {HTMLElement} el Element where v-selectable directive applied
+ * @param {object} options
+ */
+export function setOptions(el, options) {
+    if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        objectAssign(el.selectable, options);
+    }
+}

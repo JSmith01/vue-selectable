@@ -5,8 +5,9 @@
 It's common task to make mouse selection of some objects on the page. This directive makes this task
 extremely easy, all you need to implement object selection is few lines of code.
 It was designed after jQuery Selectable interaction, with some details borrowed from `angular-multiple-selection`.
-Now it supports plain mouse selection and adding to previously selected values with
-`Ctrl` key pressed during selection.
+It supports plain mouse selection and adding to previously selected values with
+`Ctrl` key pressed during selection. Scrolling of document or some specified block while selecting 
+is also supported now, but only on Y axis.
 
 ## Requirements
 
@@ -95,6 +96,28 @@ Other parameters available:
 * `data-box` - selection box element. By default it tries to use element with `selection` CSS class
 * `data-constraint` - box that constrains selection area (selection box can be only inside area
   limited to this element), by default selection area limited to element with directive
+
+## Exported util functions
+Two utility functions are exported with a directive to help configuring directive. Both require DOM node
+with directive as a first argument ("el").
+* `setSelectableItems(el, [itemSelector])` - if used without second argument, rereads DOM to fetch
+  selectable items (useful after e.g. AJAX load of items). Another CSS selector can be specified to
+  create a new list of selectable items.
+* `setOptions(el, options)` - sets directive options on the fly. For now is required to set 
+  `scrollingFrame` internal parameter for Vue.js v2 (see `examples2/example3.html`).
+  
+## Internal options
+Except already described `selectedGetter`, `selectedSetter`, and `selectingSetter`, directive has these
+internal options, that can be set using directive declaration (as getters/setters) or on the fly:
+* `disableTextSelection` (boolean) - disable browser text selection when selection box is active (turned on by default)
+* `scrollingFrame` (DOM node) - element with scrollbar, that contains list of selectable items
+* `scrollSpeed` (int) - speed of scroll (in px per 16ms, default 10px)
+* `scrollDistance` (int) - distance from borders (in px, default 10px) when scroll begins to work
+* `scrollDocumentEnabled` (boolean) - enable (default)/disable document scrolling while selecting items, ignored when scrollingFrame is configured
+* `renderSelected` (boolean) - add CSS selectedClass to elements currently selected (w/o framework)
+* `renderSelecting` (boolean) - add CSS selectedClass to elements currently under selection box (w/o framework)
+* `selectingClass` (string) - CSS class used to mark items under selection box (".selecting" by default)
+* `selectedClass` (string) - CSS class used to mark selected items (".selected" by default)
 
 ## Examples
 

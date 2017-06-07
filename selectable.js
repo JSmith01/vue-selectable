@@ -75,6 +75,36 @@ export default class selectable {
     };
 
     /**
+     * Scrolling element that contains
+     * @type {HTMLElement|null}
+     */
+    scrollingFrame = null;
+
+    /**
+     * Speed of scroll (in px per 16ms)
+     * @type {number}
+     */
+    scrollSpeed = 10;
+
+    /**
+     * Distance from borders (in px) when scroll begins to work
+     * @type {number}
+     */
+    scrollDistance = 10;
+
+    /**
+     * Enable/disable document scrolling while selecting items, ignored when scrollingFrame is configured
+     * @type {boolean}
+     */
+    scrollDocumentEnabled = true;
+
+    /**
+     *  Timeout ID (from setInterval() call)
+     * @type {null|object}
+     */
+    scrollRepeater = null;
+
+    /**
      * Add CSS selectedClass to elements currently selected (w/o framework)
      * @type {boolean}
      */
@@ -113,10 +143,14 @@ export default class selectable {
         if (this.disableTextSelection && this.dragging) {
             this.rootElement.removeEventListener('selectstart', selectable.disableTextSelection);
         }
+        if (this.scrollRepeater) {
+            clearInterval(this.scrollRepeater);
+        }
         this.selectables = [];
         this.selectBox = null;
         this.boundingBox = null;
         this.rootElement = null;
+        this.scrollingFrame = null;
     }
 
     /**
@@ -160,8 +194,15 @@ export default class selectable {
         if (this.disableTextSelection) {
             this.rootElement.addEventListener('selectstart', selectable.disableTextSelection);
         }
+        if (this.scrollRepeater) {
+            clearInterval(this.scrollRepeater);
+            this.scrollRepeater = null;
+        }
         let [x, y] = this.bound(e);
         this.selectBox = document.querySelector(this.selectBoxSelector);
+        if (this.scrollingFrame) {
+            y += this.scrollingFrame.scrollTop;
+        }
         this.startX = x;
         this.startY = y;
         this.endX = x;
@@ -200,6 +241,13 @@ export default class selectable {
             let [x, y] = this.bound(e);
             this.endX = x;
             this.endY = y;
+            if (this.scrollingFrame) {
+                this.endY += this.scrollingFrame.scrollTop;
+            }
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
+                this.scrollRepeater = null;
+            }
             this.dragging = false;
             this.updateSelection();
             if (typeof this.selectedGetter === 'function') {
@@ -227,8 +275,65 @@ export default class selectable {
             let [x, y] = this.bound(e);
             this.endX = x;
             this.endY = y;
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
+                this.scrollRepeater = null;
+            }
+            if (this.scrollingFrame) {
+                this.endY += this.scrollFrame(e);
+            } else if (this.scrollDocumentEnabled) {
+                this.scrollDocument(e);
+            }
             this.updateSelection();
             this.render();
+        }
+    }
+
+    /**
+     * Scroll frame with selectable items when mouse reaches one of edges
+     * @param {MouseEvent} e
+     * @return {int}
+     */
+    scrollFrame(e) {
+        let sf = this.scrollingFrame;
+        let frame = sf.getBoundingClientRect();
+        let diff = 0;
+        if (e.pageY >= frame.bottom - this.scrollDistance) {
+            diff = this.scrollSpeed;
+        } else if (e.pageY <= frame.top + this.scrollDistance) {
+            diff = -this.scrollSpeed;
+        }
+        sf.scrollTop += diff;
+
+        // repeat mouse move event if mouse were close to borders
+        if (e.pageY >= frame.bottom || e.pageY <= frame.top) {
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
+            }
+            this.scrollRepeater = setInterval(() => this.mouseMove(e), 16);
+        }
+
+        return sf.scrollTop;
+    }
+
+    /**
+     * Scroll document with selectable items when mouse reaches one of edges
+     * @param {MouseEvent} e
+     */
+    scrollDocument(e) {
+        let diff = 0;
+        if (this.endY <= window.pageYOffset) {
+            diff = -this.scrollSpeed;
+        } else if (this.endY >= window.pageYOffset + window.innerHeight) {
+            diff = this.scrollSpeed;
+        }
+
+        if (diff !== 0) {
+            window.scrollBy(0, diff);
+            if (this.scrollRepeater) {
+                clearInterval(this.scrollRepeater);
+            }
+            this.scrollRepeater = setInterval(() => this.mouseMove(e), 16);
         }
     }
 
@@ -261,6 +366,7 @@ export default class selectable {
      */
     updateSelection() {
         let s = this.getSelectionBox();
+        s.top -= this.scrollingFrame ? this.scrollingFrame.scrollTop : 0;
         this.selecting = this.selectables.map(selectable.absBox).map(b =>
             (Math.abs((s.left - b.left) * 2 + s.width - b.width) < (s.width + b.width)) &&
             (Math.abs((s.top - b.top) * 2 + s.height - b.height) < (s.height + b.height))
@@ -324,7 +430,8 @@ export default class selectable {
                 this.firstRun = false;
             }
             elStyle.left = (box.left - bb.left + this.selectBoxStartX) + 'px';
-            elStyle.top = (box.top - bb.top + this.selectBoxStartY) + 'px';
+            elStyle.top = (box.top - bb.top + this.selectBoxStartY -
+                (this.scrollingFrame ? this.scrollingFrame.scrollTop : 0)) + 'px';
             elStyle.width = box.width + 'px';
             elStyle.height = box.height + 'px';
         } else {
