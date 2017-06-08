@@ -6,7 +6,8 @@ It's common task to make mouse selection of some objects on the page. This direc
 extremely easy, all you need to implement object selection is few lines of code.
 It was designed after jQuery Selectable interaction, with some details borrowed from `angular-multiple-selection`.
 It supports plain mouse selection and adding to previously selected values with
-`Ctrl` key pressed during selection. Scrolling of document or some specified block while selecting 
+`Ctrl` key pressed during selection. Single items can be excluded from selection 
+with Ctrl + click on them. Scrolling of document or some specified block while selecting 
 is also supported now, but only on Y axis.
 
 ## Requirements

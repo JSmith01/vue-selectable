@@ -254,7 +254,17 @@ export default class selectable {
                 let gotSelection = this.selectedGetter() || [];
                 this.selected = this.selectables.map((v, i) => !!gotSelection[i]);
             }
-            this.selected = this.addMode ? this.selected.map((v, i) => v || this.selecting[i]) : this.selecting;
+            if (this.addMode) {
+                let selectingItemsQty = this.selecting.reduce((a, i) => a + i ? 1 : 0, 0);
+                let idx = this.selecting.findIndex(v => !!v);
+                if (selectingItemsQty === 1 && this.selected[idx]) {
+                    this.selected[idx] = false;
+                } else {
+                    this.selected = this.selected.map((v, i) => v || this.selecting[i]);
+                }
+            } else {
+                this.selected = this.selecting;
+            }
             if (typeof this.selectedSetter === 'function') {
                 this.selectedSetter(this.selected, this.selecting);
             }

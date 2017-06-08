@@ -274,6 +274,7 @@ var selectable = function () {
             this.selectBox = null;
             this.boundingBox = null;
             this.rootElement = null;
+            this.scrollingFrame = null;
         }
 
         /**
@@ -402,9 +403,23 @@ var selectable = function () {
                         return !!gotSelection[i];
                     });
                 }
-                this.selected = this.addMode ? this.selected.map(function (v, i) {
-                    return v || _this3.selecting[i];
-                }) : this.selecting;
+                if (this.addMode) {
+                    var selectingItemsQty = this.selecting.reduce(function (a, i) {
+                        return a + i ? 1 : 0;
+                    }, 0);
+                    var idx = this.selecting.findIndex(function (v) {
+                        return !!v;
+                    });
+                    if (selectingItemsQty === 1 && this.selected[idx]) {
+                        this.selected[idx] = false;
+                    } else {
+                        this.selected = this.selected.map(function (v, i) {
+                            return v || _this3.selecting[i];
+                        });
+                    }
+                } else {
+                    this.selected = this.selecting;
+                }
                 if (typeof this.selectedSetter === 'function') {
                     this.selectedSetter(this.selected, this.selecting);
                 }
