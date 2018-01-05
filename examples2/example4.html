@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test vue (closer to real use, ES6 syntax)</title>
+    <script src="../dist/selectable.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" href="example.css">
+</head>
+<body>
+<div id="app">
+    <h1>Closer to real use (ES6)</h1>
+
+    <div>
+        <label for="search">Search: </label>
+        <input type="text" id="search" v-model="search">
+    </div>
+
+    <div class="wrapper" ref="scrollbox">
+        <div class="content">
+            <div id="selectbox"></div>
+            <div id="selection-area"></div>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Age</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody v-selectable="{
+                        selectedGetter: selectedGetter,
+                        selectedSetter: selectedSetter,
+                        selectingSetter: selectingSetter
+                        }"
+                       data-items=".item"
+                       data-box="#selectbox"
+                       data-constraint="#selection-area"
+                       ref="vsel">
+                <tr v-for="(person, i) in persons"
+                    :key="person.id"
+                    v-show="isPersonShown(person)">
+                    <td :class="{ selected: !!selected[i], selecting: !!selecting[i] }" class="item">
+                        {{ person.name }}
+                        <button @click="googleIt(person)" @mousedown.stop>google it</button>
+                    </td>
+                    <td>{{ person.surname }}</td>
+                    <td>{{ person.age }}</td>
+                    <td><button @click="persons.splice(i, 1)">x</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div>
+        <button @click="clearSelection">Clear selection</button>
+        <button @click="selectAll">Select all</button>
+        <button @click="invertSelection">Invert selection</button>
+        <button @click="loadData">Reload data</button>
+    </div>
+
+    <div>
+        Selected persons ({{ selectedCount }}): {{ selectedPersons }}
+    </div>
+</div>
+<script>
+    const externalData = [
+        { id: 1, name: 'William', surname: 'Taft', age: 72 },
+        { id: 2, name: 'Woodrow', surname: 'Wilson', age: 67 },
+        { id: 3, name: 'Warren', surname: 'Harding', age: 57 },
+        { id: 4, name: 'Calvin', surname: 'Coolidge', age: 60 },
+        { id: 5, name: 'Herbert', surname: 'Hoover', age: 90 },
+        { id: 6, name: 'Franklin', surname: 'Roosevelt', age: 63 },
+        { id: 7, name: 'Harry', surname: 'Truman', age: 88 },
+        { id: 8, name: 'Dwight', surname: 'Eisenhower', age: 78 },
+        { id: 9, name: 'John', surname: 'Kennedy', age: 46 },
+        { id: 10, name: 'Lyndon', surname: 'Johnson', age: 64 },
+        { id: 11, name: 'Richard', surname: 'Nixon', age: 81 },
+        { id: 12, name: 'Gerald', surname: 'Ford', age: 93 },
+        { id: 13, name: 'Jimmy', surname: 'Carter', age: 92 },
+        { id: 14, name: 'Ronald', surname: 'Reagan', age: 93 },
+        { id: 15, name: 'George', surname: 'Bush', age: 92 },
+        { id: 16, name: 'Bill', surname: 'Clinton', age: 70 },
+        { id: 17, name: 'George', surname: 'Bush', age: 70 },
+        { id: 18, name: 'Barack', surname: 'Obama', age: 55 },
+        { id: 19, name: 'Donald', surname: 'Trump', age: 70 },
+    ];
+
+    new Vue({
+        el: '#app',
+
+        data: {
+            persons: [],
+            selected: [],
+            selecting: [],
+            showHidden: false,
+            search: ''
+        },
+
+        mounted() {
+            vueSelectable.setOptions(this.$refs.vsel, { scrollingFrame: this.$refs.scrollbox });
+            this.loadData();
+        },
+
+        computed: {
+            selectedCount() {
+                return this.selected.reduce((c, i) => c + (i ? 1 : 0), 0);
+            },
+
+            selectedPersons() {
+                return this.selectedCount > 0 ?
+                    this.persons.filter((p, i) => !!this.selected[i])
+                        .map(p => p.name + ' ' + p.surname)
+                        .join(', ') :
+                    'none';
+            }
+        },
+
+        methods: {
+            loadData() {
+                setTimeout(() => { this.persons = [].concat(externalData); }, 300);
+            },
+
+            isPersonShown(person) {
+                let searchLine = this.search.trim().toLowerCase();
+
+                return !searchLine ||
+                    (person.name + ' ' + person.surname).toLowerCase().includes(searchLine);
+            },
+
+            googleIt(person) {
+                window.open(`http://www.google.com/search?q=${person.name}+${person.surname}`, '_blank');
+            },
+
+            clearSelection() {
+                this.selected = [];
+            },
+
+            selectAll() {
+                this.selected = new Array(this.persons.length).fill(true);
+            },
+
+            invertSelection() {
+                this.selected = this.selected.length > 0 ?
+                    this.selected.map(i => !i) :
+                    new Array(this.persons.length).fill(true);
+            },
+
+            selectedGetter() {
+                return this.selected;
+            },
+
+            selectedSetter(v) {
+                this.selected = v;
+            },
+
+            selectingSetter(v) {
+                this.selecting = v;
+            }
+        },
+
+        watch: {
+            persons: {
+                handler() {
+                    this.$nextTick(() => vueSelectable.setSelectableItems(this.$refs.vsel));
+                },
+                deep: true
+            }
+        },
+
+        directives: {
+            selectable: vueSelectable.default
+        }
+    });
+</script>
+</body>
+</html>
