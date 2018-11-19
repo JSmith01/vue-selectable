@@ -347,7 +347,9 @@ var selectable = function () {
             if (typeof this.selectingSetter === 'function') {
                 this.selectingSetter(this.selecting);
             }
-            this.addMode = this.addMode || e.ctrlKey || e.metaKey;
+            this.addMode = this.overrideAddMode || e.ctrlKey || e.metaKey;
+            console.log("override add mode: ", this.overrideAddMode);
+            console.log("add mode: ", this.addMode);
             if (!this.addMode) {
                 this.selected = this.selecting;
                 if (typeof this.selectedSetter === 'function') {
@@ -675,12 +677,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var objectAssign = Object.assign || _selectable.objectAssignSimple;
 
 function initSelectable(el, params, arg) {
-    console.log(params);
     el.selectable = new _selectable2.default(objectAssign({
         boundingBox: !!params.constraint ? document.querySelector(params.constraint) : el,
         selectBoxSelector: params.box || '.selection',
-        boundingBoxSelector: params.constraint,
-        addMode: params.addMode
+        boundingBoxSelector: params.constraint
     }, arg));
     el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(params.items || '.selectable')));
 }

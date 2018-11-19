@@ -212,7 +212,9 @@ export default class selectable {
         if (typeof this.selectingSetter === 'function') {
             this.selectingSetter(this.selecting);
         }
-        this.addMode = this.addMode || e.ctrlKey || e.metaKey;
+        this.addMode = this.overrideAddMode || e.ctrlKey || e.metaKey;
+        console.log("override add mode: ", this.overrideAddMode);
+        console.log("add mode: ", this.addMode);
         if (!this.addMode) {
             this.selected = this.selecting;
             if (typeof this.selectedSetter === 'function') {

@@ -3,12 +3,10 @@ import selectable, { objectAssignSimple } from './selectable';
 const objectAssign = Object.assign || objectAssignSimple;
 
 function initSelectable(el, params, arg) {
-    console.log(params);
     el.selectable = new selectable(objectAssign({
         boundingBox: !!params.constraint ? document.querySelector(params.constraint) : el,
         selectBoxSelector: params.box || '.selection',
-        boundingBoxSelector: params.constraint,
-        addMode: params.addMode
+        boundingBoxSelector: params.constraint
     }, arg));
     el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(params.items || '.selectable')));
 }
