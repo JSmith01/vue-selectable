@@ -59,6 +59,7 @@
         <button @click="selectAll">Select all</button>
         <button @click="invertSelection">Invert selection</button>
         <button @click="loadData">Reload data</button>
+        <input type="checkbox" v-model="addMode"> Toggle Add Mode
     </div>
 
     <div>
@@ -96,7 +97,8 @@
             selected: [],
             selecting: [],
             showHidden: false,
-            search: ''
+            search: '',
+            addMode: false
         },
 
         mounted() {
@@ -167,6 +169,9 @@
                     this.$nextTick(() => vueSelectable.setSelectableItems(this.$refs.vsel));
                 },
                 deep: true
+            },
+            addMode(val) {
+              vueSelectable.setOptions(this.$refs.vsel, { addMode: val });
             }
         },
 
