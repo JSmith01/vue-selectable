@@ -348,8 +348,6 @@ var selectable = function () {
                 this.selectingSetter(this.selecting);
             }
             this.addMode = this.overrideAddMode || e.ctrlKey || e.metaKey;
-            console.log("override add mode: ", this.overrideAddMode);
-            console.log("add mode: ", this.addMode);
             if (!this.addMode) {
                 this.selected = this.selecting;
                 if (typeof this.selectedSetter === 'function') {
