@@ -88,7 +88,9 @@ for `selecting` array.
 
 Also you can specify additional parameters in the object for JS `selectable` component underneath.
 For example you can set `rootElement` to some element other than "document" 
-(to attach event listeners to it). Or set `renderSelecting/renderSelection` options to true to have
+(to attach event listeners to it). Also it's possible to set `rootElement` to `null` initially and then
+set it when necessary element appears in the DOM tree; event listeners will attach right after
+(but the trick will work only once). Or you can set `renderSelecting/renderSelection` options to true to have
 directive manage CSS classes instead of Vue.js framework.
 
 Other parameters available:

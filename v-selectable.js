@@ -67,6 +67,10 @@ export function setSelectableItems(el, itemSelector) {
  */
 export function setOptions(el, options) {
     if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        const needsAttach = el.selectable.rootElement == null && options.rootElement != null;
         objectAssign(el.selectable, options);
+        if (needsAttach) {
+            el.selectable.attach();
+        }
     }
 }

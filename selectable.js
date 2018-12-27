@@ -138,7 +138,18 @@ export default class selectable {
 
         objectAssign(this, options);
 
-        Object.keys(this.handlers).forEach(event => this.rootElement.addEventListener(event, this.handlers[event]));
+        this.attach();
+    }
+
+    /**
+     * Adds event handlers to the root element
+     */
+    attach() {
+        if (this.rootElement) {
+            Object.keys(this.handlers).forEach(
+                event => this.rootElement.addEventListener(event, this.handlers[event])
+            );
+        }
     }
 
     /**
