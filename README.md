@@ -119,6 +119,7 @@ internal options, that can be set using directive declaration (as getters/setter
 * `renderSelecting` (boolean) - add CSS selectedClass to elements currently under selection box (w/o framework)
 * `selectingClass` (string) - CSS class used to mark items under selection box (".selecting" by default)
 * `selectedClass` (string) - CSS class used to mark selected items (".selected" by default)
+* `overrideAddMode` (boolean) - selection frame always adds items to selection when this flag is true, despite "Ctrl" or "Meta" keys being pressed (false by default)
 
 ## Examples
 

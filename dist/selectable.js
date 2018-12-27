@@ -124,93 +124,8 @@ var selectable = function () {
 
 
     /**
-     * Add CSS selectedClass to elements currently under selection box (w/o framework)
+     * Selection frame always adds items to selection, despite "Ctrl" or "Meta" keys being pressed
      * @type {boolean}
-     */
-
-
-    /**
-     *  Timeout ID (from setInterval() call)
-     * @type {null|object}
-     */
-
-
-    /**
-     * Distance from borders (in px) when scroll begins to work
-     * @type {number}
-     */
-
-
-    /**
-     * Scrolling element that contains
-     * @type {HTMLElement|null}
-     */
-
-
-    /**
-     * Called to get list of selected items
-     * @type {Function | null}
-     */
-
-
-    /**
-     * Element that limits where selection can be made
-     * @type {HTMLDocument}
-     */
-    function selectable() {
-        var _this = this;
-
-        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-        _classCallCheck(this, selectable);
-
-        this.selectBox = null;
-        this.selectBoxSelector = '.selection';
-        this.rootElement = document;
-        this.boundingBox = document;
-        this.boundingBoxSelector = null;
-        this.dragging = false;
-        this.startX = null;
-        this.startY = null;
-        this.endX = null;
-        this.endY = null;
-        this.selectables = [];
-        this.selected = [];
-        this.selectedSetter = null;
-        this.selectedGetter = null;
-        this.selectingSetter = null;
-        this.selecting = [];
-        this.addMode = false;
-        this.disableTextSelection = true;
-        this.handlers = {
-            mousedown: null,
-            mouseup: null,
-            mousemove: null
-        };
-        this.scrollingFrame = null;
-        this.scrollSpeed = 10;
-        this.scrollDistance = 10;
-        this.scrollDocumentEnabled = true;
-        this.scrollRepeater = null;
-        this.renderSelected = false;
-        this.renderSelecting = false;
-        this.selectingClass = 'selecting';
-        this.selectedClass = 'selected';
-        this.firstRun = true;
-
-        this.handlers.mousedown = this.mouseDown.bind(this);
-        this.handlers.mouseup = this.mouseUp.bind(this);
-        this.handlers.mousemove = this.mouseMove.bind(this);
-
-        objectAssign(this, options);
-
-        Object.keys(this.handlers).forEach(function (event) {
-            return _this.rootElement.addEventListener(event, _this.handlers[event]);
-        });
-    }
-
-    /**
-     * Removes all registered event handlers and clears references to DOM nodes
      */
 
 
@@ -252,6 +167,98 @@ var selectable = function () {
 
     /**
      * Event listeners are attached to this element
+     * @type {HTMLDocument}
+     */
+    function selectable() {
+        var _this = this;
+
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        _classCallCheck(this, selectable);
+
+        this.selectBox = null;
+        this.selectBoxSelector = '.selection';
+        this.rootElement = document;
+        this.boundingBox = document;
+        this.boundingBoxSelector = null;
+        this.dragging = false;
+        this.startX = null;
+        this.startY = null;
+        this.endX = null;
+        this.endY = null;
+        this.selectables = [];
+        this.selected = [];
+        this.selectedSetter = null;
+        this.selectedGetter = null;
+        this.selectingSetter = null;
+        this.selecting = [];
+        this.addMode = false;
+        this.disableTextSelection = true;
+        this.handlers = {
+            mousedown: null,
+            mouseup: null,
+            mousemove: null
+        };
+        this.scrollingFrame = null;
+        this.scrollSpeed = 10;
+        this.scrollDistance = 10;
+        this.scrollDocumentEnabled = true;
+        this.scrollRepeater = null;
+        this.renderSelected = false;
+        this.renderSelecting = false;
+        this.overrideAddMode = false;
+        this.selectingClass = 'selecting';
+        this.selectedClass = 'selected';
+        this.firstRun = true;
+
+        this.handlers.mousedown = this.mouseDown.bind(this);
+        this.handlers.mouseup = this.mouseUp.bind(this);
+        this.handlers.mousemove = this.mouseMove.bind(this);
+
+        objectAssign(this, options);
+
+        Object.keys(this.handlers).forEach(function (event) {
+            return _this.rootElement.addEventListener(event, _this.handlers[event]);
+        });
+    }
+
+    /**
+     * Removes all registered event handlers and clears references to DOM nodes
+     */
+
+
+    /**
+     * Add CSS selectedClass to elements currently under selection box (w/o framework)
+     * @type {boolean}
+     */
+
+
+    /**
+     *  Timeout ID (from setInterval() call)
+     * @type {null|object}
+     */
+
+
+    /**
+     * Distance from borders (in px) when scroll begins to work
+     * @type {number}
+     */
+
+
+    /**
+     * Scrolling element that contains
+     * @type {HTMLElement|null}
+     */
+
+
+    /**
+     * Called to get list of selected items
+     * @type {Function | null}
+     */
+
+
+    /**
+     * Element that limits where selection can be made
      * @type {HTMLDocument}
      */
 

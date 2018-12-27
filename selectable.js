@@ -116,6 +116,12 @@ export default class selectable {
      */
     renderSelecting = false;
 
+    /**
+     * Selection frame always adds items to selection, despite "Ctrl" or "Meta" keys being pressed
+     * @type {boolean}
+     */
+    overrideAddMode = false;
+
     selectingClass = 'selecting';
     selectedClass = 'selected';
 
