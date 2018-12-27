@@ -170,8 +170,6 @@ var selectable = function () {
      * @type {HTMLDocument}
      */
     function selectable() {
-        var _this = this;
-
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         _classCallCheck(this, selectable);
@@ -217,13 +215,11 @@ var selectable = function () {
 
         objectAssign(this, options);
 
-        Object.keys(this.handlers).forEach(function (event) {
-            return _this.rootElement.addEventListener(event, _this.handlers[event]);
-        });
+        this.attach();
     }
 
     /**
-     * Removes all registered event handlers and clears references to DOM nodes
+     * Adds event handlers to the root element
      */
 
 
@@ -264,6 +260,22 @@ var selectable = function () {
 
 
     _createClass(selectable, [{
+        key: 'attach',
+        value: function attach() {
+            var _this = this;
+
+            if (this.rootElement) {
+                Object.keys(this.handlers).forEach(function (event) {
+                    return _this.rootElement.addEventListener(event, _this.handlers[event]);
+                });
+            }
+        }
+
+        /**
+         * Removes all registered event handlers and clears references to DOM nodes
+         */
+
+    }, {
         key: 'detach',
         value: function detach() {
             var _this2 = this;
@@ -746,7 +758,11 @@ function setSelectableItems(el, itemSelector) {
  */
 function setOptions(el, options) {
     if (!!el && !!el.selectable && typeof el.selectable.setSelectables === 'function') {
+        var needsAttach = el.selectable.rootElement == null && options.rootElement != null;
         objectAssign(el.selectable, options);
+        if (needsAttach) {
+            el.selectable.attach();
+        }
     }
 }
 
