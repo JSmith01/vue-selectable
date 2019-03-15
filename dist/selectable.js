@@ -113,6 +113,17 @@ function objectAssignSimple(target) {
     return target;
 }
 
+function isDescendant(parent, child) {
+    var node = child.parentNode;
+    while (node != null) {
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
+
 var objectAssign = Object.assign || objectAssignSimple;
 
 var selectable = function () {
@@ -174,6 +185,7 @@ var selectable = function () {
 
         _classCallCheck(this, selectable);
 
+        this.element = null;
         this.selectBox = null;
         this.selectBoxSelector = '.selection';
         this.rootElement = document;
@@ -258,6 +270,11 @@ var selectable = function () {
      * @type {HTMLDocument}
      */
 
+    /**
+     * Element which has selectable attached for checks whether mousedown started within this element (and not outside).
+     * Element can have overlay which should not trigger selecting on mousedown.
+     */
+
 
     _createClass(selectable, [{
         key: 'attach',
@@ -328,7 +345,9 @@ var selectable = function () {
          * @param {MouseEvent} e
          */
         value: function mouseDown(e) {
-            if (e.button !== 0) {
+            // if element on which mousedown started is not descendant of element
+            var isSrcDescendant = this.element === null || isDescendant(this.element, e.target);
+            if (e.button !== 0 || !isSrcDescendant) {
                 return;
             }
             if (!!this.boundingBoxSelector) {
@@ -697,7 +716,8 @@ function initSelectable(el, params, arg) {
     el.selectable = new _selectable2.default(objectAssign({
         boundingBox: !!params.constraint ? document.querySelector(params.constraint) : el,
         selectBoxSelector: params.box || '.selection',
-        boundingBoxSelector: params.constraint
+        boundingBoxSelector: params.constraint,
+        element: el
     }, arg));
     el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(params.items || '.selectable')));
 }

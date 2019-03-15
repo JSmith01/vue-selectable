@@ -14,9 +14,25 @@ export function objectAssignSimple(target) {
     return target;
 }
 
+function isDescendant (parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
+
 const objectAssign = Object.assign || objectAssignSimple;
 
 export default class selectable {
+    /**
+     * Element which has selectable attached for checks whether mousedown started within this element (and not outside).
+     * Element can have overlay which should not trigger selecting on mousedown.
+     */
+    element = null;
     selectBox = null;
     selectBoxSelector = '.selection';
 
@@ -197,7 +213,9 @@ export default class selectable {
      * @param {MouseEvent} e
      */
     mouseDown(e) {
-        if (e.button !== 0) {
+        // if element on which mousedown started is not descendant of element
+        let isSrcDescendant = this.element === null || isDescendant(this.element, e.target)
+        if (e.button !== 0 || !isSrcDescendant) {
             return;
         }
         if (!!this.boundingBoxSelector) {
