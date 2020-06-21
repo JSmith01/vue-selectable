@@ -1,7 +1,8 @@
 const path = require('path');
 
 module.exports = {
-    entry: './v-selectable.js',
+    mode: 'production',
+    entry: path.resolve(__dirname, 'v-selectable.js'),
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'selectable.js',

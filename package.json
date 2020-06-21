@@ -1,6 +1,6 @@
 {
   "name": "vue-selectable",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "Directive to make objects selectable in vue.js application",
   "main": "dist/selectable.js",
   "repository": {
@@ -8,15 +8,15 @@
     "url": "https://github.com/JSmith01/vue-selectable"
   },
   "directories": {
-    "example": "examples"
+    "example": "examples2"
   },
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-preset-env": "^1.4.0",
-    "webpack": "^2.5.1"
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.10.3",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.43.0"
   },
   "scripts": {
     "build": "webpack"
