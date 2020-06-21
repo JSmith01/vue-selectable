@@ -107,7 +107,7 @@ with directive as a first argument ("el").
   selectable items (useful after e.g. AJAX load of items). Another CSS selector can be specified to
   create a new list of selectable items.
 * `setOptions(el, options)` - sets directive options on the fly. For now is required to set 
-  `scrollingFrame` internal parameter for Vue.js v2 (see `examples2/example3.html`).
+  `scrollingFrame` internal parameter for Vue.js v2 (see `examples-vue2/example3.html`).
   
 ## Internal options
 Except already described `selectedGetter`, `selectedSetter`, and `selectingSetter`, directive has these
