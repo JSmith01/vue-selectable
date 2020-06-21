@@ -6,7 +6,8 @@ function initSelectable(el, params, arg) {
     el.selectable = new selectable(objectAssign({
         boundingBox: !!params.constraint ? document.querySelector(params.constraint) : el,
         selectBoxSelector: params.box || '.selection',
-        boundingBoxSelector: params.constraint
+        boundingBoxSelector: params.constraint,
+        el
     }, arg));
     el.selectable.setSelectables(Array.prototype.slice.call(el.querySelectorAll(params.items || '.selectable')));
 }

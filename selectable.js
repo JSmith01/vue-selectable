@@ -17,6 +17,12 @@ export function objectAssignSimple(target) {
 const objectAssign = Object.assign || objectAssignSimple;
 
 export default class selectable {
+    /**
+     * Element which has selectable attached
+     * @type {HTMLElement}
+     */
+    el = null;
+
     selectBox = null;
     selectBoxSelector = '.selection';
 
@@ -168,6 +174,7 @@ export default class selectable {
         this.boundingBox = null;
         this.rootElement = null;
         this.scrollingFrame = null;
+        this.element = null;
     }
 
     /**
@@ -197,7 +204,8 @@ export default class selectable {
      * @param {MouseEvent} e
      */
     mouseDown(e) {
-        if (e.button !== 0) {
+        const isSrcDescendant = this.el === e.target || this.el.contains(e.target);
+        if (e.button !== 0 || !isSrcDescendant) {
             return;
         }
         if (!!this.boundingBoxSelector) {

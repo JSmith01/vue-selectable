@@ -39,10 +39,24 @@
         .selectable.selected {
             background-color: orange;
         }
+        .modal {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 400px;
+            height: 300px;
+            background-color: #eeeeee;
+            border: 1px solid #aaaaaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
     </style>
 </head>
 <body>
 <div id="app">
+    <div><button @click="showModal = !showModal">Toggle modal</button></div>
     <div v-selectable="{ selectedGetter: selectedGetter, selectedSetter: selectedSetter, selectingSetter: selectingSetter}"
          class="container">
         <div class="selection"></div>
@@ -53,6 +67,7 @@
         </div>
     </div>
     <button @click="selected = []">Clear selection</button>
+    <div class="modal" v-show="showModal">This is a modal window with some content</div>
 </div>
 <script>
     new Vue({
@@ -60,7 +75,8 @@
         data: {
             items: ['aaa', 'bbb', 'ccc', 'ddd', 'zzz', 'www', 'ggg'],
             selected: [],
-            selecting: []
+            selecting: [],
+            showModal: false
         },
 
         methods: {
