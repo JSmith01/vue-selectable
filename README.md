@@ -14,7 +14,7 @@ is also supported now, but only on Y axis.
 
 * vue: ^1.0
 * vue2: ^2.0
-* Browsers - briefly tested on Chrome 58, IE 11, Firefox 53
+* Browsers - briefly tested on Chrome 58 & 83, IE 11, Firefox 53
 
 ## Install
 
@@ -125,8 +125,8 @@ internal options, that can be set using directive declaration (as getters/setter
 
 ## Examples
 
-Example usages can be found in `examples` directory for Vue.js v1 and `examples2` for Vue.js v2.
-Examples for v2 were tested against version 2.3.3.
+Example usages can be found in `examples-vue1` directory for Vue.js v1 and `examples-vue2` for Vue.js v2.
+Examples for v2 were tested against version 2.3.3 and 2.6.11.
 
 ## License
 

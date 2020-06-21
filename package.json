@@ -8,7 +8,7 @@
     "url": "https://github.com/JSmith01/vue-selectable"
   },
   "directories": {
-    "example": "examples2"
+    "example": "examples-vue2"
   },
   "dependencies": {},
   "devDependencies": {
